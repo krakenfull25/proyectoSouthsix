@@ -1,2 +1,3 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<h1>Plantilla de proyecto For-Him</h1>
+<p>Creada por el goat ignduu05</p>
+<img src="https://media.tenor.com/BuSEbkm9aAIAAAAi/hi-otag.gif"/>
