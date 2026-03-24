@@ -30,6 +30,7 @@
             gap: 26px;
             justify-content: space-between;
             padding: 30px 20px;
+            align-items: center;
 
             > .logo {
                 display: flex;
@@ -50,6 +51,11 @@
                     font-size: 15px;
                     font-weight: 400;
                 }
+            }
+
+            > img {
+                display: block;
+                object-fit: cover;
             }
         }
     }
