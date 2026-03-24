@@ -18,6 +18,7 @@
 <style lang="scss">
     header {
         background-color: #2D3E40;
+        margin-bottom: 60px;
 
         > .content {
             display: flex;
