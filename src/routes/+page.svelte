@@ -1,11 +1,23 @@
+<!-- 
+Esta es la página home, todas las páginas tienen header y footer iguales, en cuanto a esta página,
+se muestra un display de los productos por "secciones", el titulo y la lista de productos se deben
+pasar por cards.
+-->
+
 <script>
     import Header from "$lib/Components/Header.svelte";
+    import DisplayProductsHome from "$lib/Components/DisplayProductsHome.svelte";
+	  import Footer from "$lib/Components/Footer.svelte";
 </script>
-<Header/>
 
-<h1>Plantilla de proyecto For-Him</h1>
-<p>Creada por el goat ignduu05</p>
-<img src="https://media.tenor.com/BuSEbkm9aAIAAAAi/hi-otag.gif" alt="meme de ejemplo"/>
+
+
+<Header/>
+<DisplayProductsHome titulo={"Productos destacados"}/>
+<DisplayProductsHome titulo={"Novedades"}/>
+<DisplayProductsHome titulo={"Los más vendidos"}/>
+<Footer/>
+
 
 <style lang="scss">
     :global(body, html) {
