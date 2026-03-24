@@ -25,7 +25,7 @@ Footer de las páginas, nada en especial que explicar.
         </div>
     </div>
     <div class="inferior">
-
+        <p>Copyright &copy; 2026, For Him. Todos los derechos reservados.</p>
     </div>
 </footer>
 
@@ -33,6 +33,10 @@ Footer de las páginas, nada en especial que explicar.
     footer {
         background-color: #2D3E40;
         padding: 16px 24px;
+        margin-top: 100px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
 
         > .superior {
             display: flex;
@@ -52,6 +56,19 @@ Footer de las páginas, nada en especial que explicar.
                 > p {
                     text-align: center;
                 }
+                
+                > .social-media-icons {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    gap: 10px;
+                }
+            }
+        }
+
+        > .inferior {
+            > p {
+                text-align: center;
             }
         }
     }
