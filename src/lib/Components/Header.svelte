@@ -9,12 +9,17 @@
     <div class="content">
         <img src={hamburgerIcon} alt="Icono hamburger">
         <img src={searchIcon} alt="Icono busqueda">
-        <div class="logo">
+        <a class="logo-link" href="..">
+            <div class="logo">
             <p>FOR-HIM</p>
             <p>GROOMING & BEYOND</p>
         </div>
+        </a>
+        
         <img src={shoppingCart} alt="Icono carrito">
-        <img src={userProfile} alt="Icono perfil">
+        <a href="./user-profile">
+            <img src={userProfile} alt="Icono perfil">
+        </a>
     </div>
 </header>
 
@@ -32,7 +37,10 @@
             padding: 30px 20px;
             align-items: center;
 
-            > .logo {
+            >.logo-link {
+                text-decoration: none;
+
+                > .logo {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -52,6 +60,8 @@
                     font-weight: 400;
                 }
             }
+            }
+            
 
             > img {
                 display: block;
