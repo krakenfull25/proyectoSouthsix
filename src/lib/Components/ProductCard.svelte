@@ -1,8 +1,8 @@
 <!--
 Card de producto que se muestra en la página home.
 -->
-
-<div class="card">
+<a href="./product-detail">
+	<div class="card">
 	<div class="image">
 		<p>Aqui va la imagen del producto que sea, más tarde se pasará por props.</p>
 	</div>
@@ -18,10 +18,15 @@ Card de producto que se muestra en la página home.
 			<p>&#128722;</p>
 		</div>
 	</div>
-</div>
+	</div>
+</a>
+
 
 <style lang="scss">
-	.card {
+	a {
+		text-decoration: none;
+
+		.card {
 		border: 1px solid #e0e0e0;
 		border-radius: 8px;
 		overflow: hidden;
@@ -87,5 +92,6 @@ Card de producto que se muestra en la página home.
           
         }
 		
+	}
 	}
 </style>
