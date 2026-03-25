@@ -5,25 +5,11 @@ Esta es la página de detalle de producto, se mostrarán los datos de los produc
 <script>
 	import Header from '$lib/Components/Header.svelte';
 	import Footer from '$lib/Components/Footer.svelte';
+	import ImageDisplay from '$lib/Components/ImageDisplay.svelte';
 </script>
 
 <Header />
-<div class="image">
-	<h2>Nombre del producto</h2>
-	<div class="image-display">
-		<div class="main-image">
-			<p>IMAGEN PRINCIPAL SELECCIONADA</p>
-		</div>
-		<div class="other-images">
-			<p>Imagen 1</p>
-			<p>Imagen 2</p>
-			<p>Imagen 3</p>
-			<p>Imagen 4</p>
-			<p>Imagen 5</p>
-			<p>Imagen 6</p>
-		</div>
-	</div>
-</div>
+<ImageDisplay/>
 
 <div class="description">
   <h2>Descripcion del producto</h2>
@@ -51,8 +37,11 @@ Esta es la página de detalle de producto, se mostrarán los datos de los produc
   </select>
 </div>
 
-<a href=".." class="whislist">Añadir a la lista de deseados</a>
-<a href=".." class="add-to-cart">Añadir al carrito</a>
+<div class="buttons">
+	<a href=".." class="whislist">Añadir a la lista de deseados</a>
+	<a href=".." class="add-to-cart">Añadir al carrito</a>
+</div>
+
 
 <Footer />
 
@@ -64,5 +53,11 @@ Esta es la página de detalle de producto, se mostrarán los datos de los produc
 	}
 	:global(*) {
 		box-sizing: border-box;
+	}
+
+	.buttons {
+		display: flex;
+		flex-direction: column;
+		gap: 30px;
 	}
 </style>

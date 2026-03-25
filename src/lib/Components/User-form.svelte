@@ -30,7 +30,7 @@
 				<label for="mail">Correo electrónico:</label>
 				<input type="text" name="mail" id="mail" />
 			</div>
-            <input type="submit" name="btnGuardar" value="Guardar cambios">
+            <a href=".." name="btnGuardar">Guardar cambios</a>
 		</form>
 	</div>
 </div>
@@ -78,13 +78,18 @@
                 }
             }
 
-            > input {
+            > a {
                 height: 65px;
                 background-color: #E4F2E7;
                 border: 1px solid black;
                 border-radius: 10px;
                 font-family: 'PT Sans Narrow', sans-serif;
                 font-size: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                color: black;
             }
         }
     }
