@@ -1,21 +1,18 @@
 <!-- 
-Esta es la página home, todas las páginas tienen header y footer iguales, en cuanto a esta página,
-se muestra un display de los productos por "secciones", el titulo y la lista de productos se deben
-pasar por cards.
+Esta es la página de perfil de usuario, aqui se muestra un formulario con los datos del usuario seleccionado, todos
+en un formulario con su formato respectivo.
 -->
 
 <script>
     import Header from "$lib/Components/Header.svelte";
-    import DisplayProductsHome from "$lib/Components/DisplayProductsHome.svelte";
 	  import Footer from "$lib/Components/Footer.svelte";
+    import UserForm from "$lib/Components/User-form.svelte";
 </script>
 
 
 
 <Header/>
-<DisplayProductsHome titulo={"Productos destacados"}/>
-<DisplayProductsHome titulo={"Novedades"}/>
-<DisplayProductsHome titulo={"Los más vendidos"}/>
+<UserForm/>
 <Footer/>
 
 
