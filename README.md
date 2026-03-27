@@ -1,42 +1,54 @@
-# sv
+# 💈 Plataforma Web de Productos de Barbería
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## 📌 Descripción del Proyecto
+Este proyecto consiste en una **plataforma web de venta online de productos de barbería para hombres**, diseñada para ofrecer una experiencia completa al usuario.
 
-## Creating a project
+Además de la tienda, la plataforma incluye un sistema de **asesoría personalizada**, que ayuda a los clientes a elegir los productos más adecuados según sus necesidades.
 
-If you're seeing this, you've probably already done this step. Congrats!
+---
 
-```sh
-# create a new project
-npx sv create my-app
-```
+## 🎯 Objetivo
+El objetivo principal es desarrollar una aplicación web funcional como práctica educativa, aplicando los conocimientos adquiridos en el ciclo formativo de Desarrollo de Aplicaciones Web.
 
-To recreate this project with the same configuration:
+---
 
-```sh
-# recreate this project
-npx sv@0.12.8 create --template minimal --no-types --add prettier --install npm For-Him
-```
+## 🛠️ Tecnologías Utilizadas
+- **Framework:** Sveltik  
+- **Lenguaje principal:** JavaScript  
+- **Frontend:** HTML, CSS  
 
-## Developing
+---
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## 👥 Equipo de Desarrollo
+Este proyecto ha sido desarrollado por:
 
-```sh
-npm run dev
+- Alejandro Luque  
+- Julen García  
+- Ignacio Durán  
+- Yves Alexandre de Faria  
+- Eloy Esteban  
+- Josué Fernández  
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+---
 
-## Building
+## ⚙️ Funcionalidades
+- 🛒 Catálogo de productos de barbería  
+- 🔍 Búsqueda y exploración de productos  
+- 💡 Sistema de asesoramiento personalizado  
+- 🧾 Información detallada de cada producto  
+- 📱 Diseño adaptable (responsive)
 
-To create a production version of your app:
+---
 
-```sh
-npm run build
-```
+## 🎓 Contexto Académico
+Este proyecto ha sido desarrollado con **fines educativos** como parte de la asignatura de *Proyecto* en el **segundo año del ciclo de Desarrollo de Aplicaciones Web (DAW)**.
 
-You can preview the production build with `npm run preview`.
+---
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## 🚀 Estado del Proyecto
+📌 En desarrollo 
+
+---
+
+## 📄 Licencia
+Este proyecto es de uso educativo y no tiene fines comerciales.
