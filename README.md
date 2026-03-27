@@ -52,3 +52,5 @@ Este proyecto ha sido desarrollado con **fines educativos** como parte de la asi
 
 ## 📄 Licencia
 Este proyecto es de uso educativo y no tiene fines comerciales.
+
+[Acceso Proyecto](https://proyecto-southsix.vercel.app)
