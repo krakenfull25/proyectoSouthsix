@@ -59,4 +59,11 @@ Este componente se utiliza en product-detail, se muestra las imagenes del produc
 		}
     }
     
+	@media (min-width:1024px) {
+		.image {
+			> .image-display {
+				flex-direction: row;
+			}
+		}
+	}
 </style>

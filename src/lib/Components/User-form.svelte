@@ -93,4 +93,23 @@
             }
         }
     }
+
+    @media (min-width:1024px) {
+        .form-container {
+            display: flex;
+            flex-direction: row;
+            margin: 0 90px;
+            gap: 20px;
+            justify-content: space-between;
+
+             > .pfp-container {
+                margin: 0;
+                width: 100%;
+            }
+
+            > .form > form {
+                gap: 73px;
+            }
+        }
+    }
 </style>

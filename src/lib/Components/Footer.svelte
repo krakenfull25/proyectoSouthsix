@@ -100,6 +100,21 @@ Footer de las páginas, nada en especial que explicar.
             }
         }
     }
+
+    @media (min-width:1024px) {
+        footer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            >.superior {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    }
 </style>
 
 
