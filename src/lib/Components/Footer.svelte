@@ -6,17 +6,14 @@ Footer de las páginas, nada en especial que explicar.
     import instagram from "$lib/assets/footer-icons/instagram-icon.svg";
     import youtube from "$lib/assets/footer-icons/youtube-icon.svg";
     import tiktok from "$lib/assets/footer-icons/tiktok-icon.svg";
-    import silhouette from "$lib/assets/footer-icons/head-silhouette.svg";
+    import silhouette from "$lib/assets/footer-icons/Logo.png";
 </script>
 
 <footer>
     <div class="superior">
         <div class="full-logo">
             <img src={silhouette} alt="silueta logo"/>
-            <div class="logo">
-                <p>FOR-HIM</p>
-                <p>GROOMING & BEYOND</p>
-            </div>
+            
         </div>
         <div class="social-media">
             <p>Siguenos en nuestras redes sociales</p>
@@ -35,86 +32,79 @@ Footer de las páginas, nada en especial que explicar.
 
 <style lang="scss">
     footer {
-        background-color: #2D3E40;
-        padding: 16px 24px;
-        margin-top: 100px;
-        display: flex;
-        flex-direction: column;
-        gap: 32px;
+	background-color: #2D3E40;
+	padding: 16px 24px;
+	margin-top: 100px;
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
 
-        > .superior {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            justify-content: space-between;
-            gap: 36px;
+	> .superior {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		gap: 36px;
 
-            > .full-logo {
-                display: flex;
+		> .full-logo {
+			display: flex;
 
-                > .logo {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                color: #FFFFFF;
+			img {
+				width: 120px;
+				height: auto;
+				object-fit: contain;
+			}
+		}
 
-                > p {
-                    margin: 0;
-                }
+		> .social-media {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
 
-                :nth-child(1) {
-                    font-size: 30px;
-                    font-weight: 700;
-                }
+			> p {
+				text-align: center;
+				color: white;
+				margin-bottom: 8px;
+			}
 
-                :nth-child(2) {
-                    font-size: 15px;
-                    font-weight: 400;
-                    text-align: center;
-                }
-            }
-            }
+			> .social-media-icons {
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				gap: 10px;
 
-            > .social-media {
-                display: flex;
-                flex-direction: column;
-                
-                > p {
-                    text-align: center;
-                    color:white;
-                }
-                
-                > .social-media-icons {
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: center;
-                    gap: 10px;
-                }
-            }
-        }
+				img {
+					width: 30px;
+					height: auto;
+				}
+			}
+		}
+	}
 
-        > .inferior {
-            > p {
-                text-align: center;
-                color: white;
-            }
-        }
-    }
+	> .inferior {
+		> p {
+			text-align: center;
+			color: white;
+			font-size: 14px;
+		}
+	}
 
-    @media (min-width:1024px) {
-        footer {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+	@media (min-width: 1024px) {
+		> .superior {
+			flex-direction: row;
+			align-items: center;
 
-            >.superior {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-    }
+			> .full-logo img {
+				width: 150px;
+			}
+
+			> .social-media > .social-media-icons img {
+				width: 35px;
+			}
+		}
+	}
+}
 </style>
 
 

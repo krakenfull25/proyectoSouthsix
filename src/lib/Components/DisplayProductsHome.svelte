@@ -6,7 +6,7 @@ cuales se guardaran inicialmente en un JSON, la cuál se hará mas tarde.
 
 <script>
 	let { titulo } = $props();
-	import ProductCard from "$lib/Components/ProductCard.svelte";
+	import ProductCard from '$lib/Components/ProductCard.svelte';
 </script>
 
 <div class="container">
@@ -25,16 +25,36 @@ cuales se guardaran inicialmente en un JSON, la cuál se hará mas tarde.
 
 		> h2 {
 			border-bottom: 1px solid #2d3e40;
+			padding-bottom: 8px;
 		}
 
-        > .product-container {
-            display: flex;
-            flex-direction: column;
-            gap: 22px;
+		.product-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 22px;
 
-            > p {
-                margin: auto;
-            }
-        }
+			> :global(.card) {
+				width: 95%;       // móvil: ocupa casi todo el ancho
+				max-width: 420px;
+				min-width: 250px;
+				flex-shrink: 1;   // permite encoger si la ventana es más pequeña
+			}
+		}
+
+		@media (min-width: 768px) {
+			.product-container {
+				flex-direction: row;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 20px;
+
+				> :global(.card) {
+					width: 90%;      // desktop: ancho flexible
+					max-width: 420px;
+					min-width: 250px;
+				}
+			}
+		}
 	}
 </style>
