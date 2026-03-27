@@ -11,9 +11,9 @@
         <img src={searchIcon} alt="Icono busqueda">
         <a class="logo-link" href="..">
             <div class="logo">
-            <p>FOR-HIM</p>
-            <p>GROOMING & BEYOND</p>
-        </div>
+                <p>FOR-HIM</p>
+                <p>GROOMING & BEYOND</p>
+            </div>
         </a>
         
         <img src={shoppingCart} alt="Icono carrito">

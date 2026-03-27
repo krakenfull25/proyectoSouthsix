@@ -6,13 +6,17 @@ Footer de las páginas, nada en especial que explicar.
     import instagram from "$lib/assets/footer-icons/instagram-icon.svg";
     import youtube from "$lib/assets/footer-icons/youtube-icon.svg";
     import tiktok from "$lib/assets/footer-icons/tiktok-icon.svg";
+    import silhouette from "$lib/assets/footer-icons/head-silhouette.svg";
 </script>
 
 <footer>
     <div class="superior">
         <div class="full-logo">
-            <p>IMAGEN CARA</p>
-            <p>LOGO AQUI</p>
+            <img src={silhouette} alt="silueta logo"/>
+            <div class="logo">
+                <p>FOR-HIM</p>
+                <p>GROOMING & BEYOND</p>
+            </div>
         </div>
         <div class="social-media">
             <p>Siguenos en nuestras redes sociales</p>
@@ -47,6 +51,28 @@ Footer de las páginas, nada en especial que explicar.
 
             > .full-logo {
                 display: flex;
+
+                > .logo {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                color: #FFFFFF;
+
+                > p {
+                    margin: 0;
+                }
+
+                :nth-child(1) {
+                    font-size: 30px;
+                    font-weight: 700;
+                }
+
+                :nth-child(2) {
+                    font-size: 15px;
+                    font-weight: 400;
+                    text-align: center;
+                }
+            }
             }
 
             > .social-media {
@@ -55,6 +81,7 @@ Footer de las páginas, nada en especial que explicar.
                 
                 > p {
                     text-align: center;
+                    color:white;
                 }
                 
                 > .social-media-icons {
@@ -69,6 +96,7 @@ Footer de las páginas, nada en especial que explicar.
         > .inferior {
             > p {
                 text-align: center;
+                color: white;
             }
         }
     }
