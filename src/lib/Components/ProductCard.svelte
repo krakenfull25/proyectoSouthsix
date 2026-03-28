@@ -29,23 +29,23 @@ Card de producto que se muestra en la página home.
 </a>
 
 <style lang="scss">
+
+		
 	a {
 		text-decoration: none;
 
 		.card {
-			width: 420px;
-			height: 200px;
+			width: min(90vw, 360px);
+			height: auto;
 			background: #387373;
 			border-radius: 16px;
 			display: flex;
-			padding: 14px;
-			gap: 16px;
+			padding: 12px;
+			gap: 12px;
 			align-items: center;
 			overflow: hidden;
 			box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-			transition:
-				transform 0.25s ease,
-				box-shadow 0.25s ease;
+			transition: transform 0.25s ease, box-shadow 0.25s ease;
 
 			&:hover {
 				transform: translateY(-4px);
@@ -54,8 +54,8 @@ Card de producto que se muestra en la página home.
 		}
 
 		.image {
-			width: 140px;
-			height: 140px;
+			width: 120px;
+			height: 120px;
 			background: #f2f2f2;
 			border-radius: 14px;
 			display: flex;
@@ -82,12 +82,12 @@ Card de producto que se muestra en la página home.
 				color: white;
 
 				&:first-child {
-					font-size: 20px;
+					font-size: 14px;
 					font-weight: 700;
 				}
 
 				&:nth-child(2) {
-					font-size: 15px;
+					font-size: 12px;
 					opacity: 0.9;
 				}
 			}
@@ -98,9 +98,8 @@ Card de producto que se muestra en la página home.
 				justify-content: space-between;
 
 				p:last-child {
-					font-size: 22px;
+					font-size: 15px;
 					font-weight: 700;
-					color: #ffffff;
 				}
 			}
 
@@ -111,26 +110,53 @@ Card de producto que se muestra en la página home.
 				margin-top: auto;
 
 				.icon-button {
-					width: 40px;
-					height: 40px;
+					width: 36px;
+					height: 36px;
 					background: #97a6a0;
 					border-radius: 50%;
+					margin-top: 10px;
 					padding: 4px;
 					display: flex;
 					align-items: center;
 					justify-content: center;
 					cursor: pointer;
-					transition:
-						transform 0.2s ease,
-						filter 0.2s ease;
-
-				
+					transition: transform 0.2s ease, filter 0.2s ease;
 
 					&:hover {
 						transform: scale(1.1);
 						filter: brightness(1.15);
 					}
 				}
+			}
+		}
+	}
+
+	@media (min-width: 1024px) {
+		
+		
+		a {
+			.card {
+				width: 420px;
+				height: 200px;
+				padding: 14px;
+				gap: 16px;
+			}
+
+			.image {
+				width: 140px;
+				height: 140px;
+			}
+
+			.card-data p:first-child {
+				font-size: 20px;
+			}
+
+			.card-data p:nth-child(2) {
+				font-size: 15px;
+			}
+
+			.price p:last-child {
+				font-size: 22px;
 			}
 		}
 	}
