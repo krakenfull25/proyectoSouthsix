@@ -37,21 +37,22 @@ Footer de las páginas, nada en especial que explicar.
 	margin-top: 100px;
 	display: flex;
 	flex-direction: column;
+	
 	gap: 32px;
 
 	> .superior {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column; /* mobile-first: columna en pantalla pequeña */
 		flex-wrap: wrap;
-		justify-content: space-between;
+		justify-content: center;
 		align-items: center;
-		gap: 36px;
+		gap: 24px;
 
 		> .full-logo {
 			display: flex;
 
 			img {
-				width: 120px;
+				width: 150px;
 				height: auto;
 				object-fit: contain;
 			}
@@ -94,9 +95,13 @@ Footer de las páginas, nada en especial que explicar.
 		> .superior {
 			flex-direction: row;
 			align-items: center;
-
+			justify-content: space-between; 
 			> .full-logo img {
 				width: 150px;
+			}
+
+			> .social-media {
+				align-items: flex-end;
 			}
 
 			> .social-media > .social-media-icons img {
