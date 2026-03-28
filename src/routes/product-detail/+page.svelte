@@ -78,9 +78,12 @@ Esta es la página de detalle de producto, se mostrarán los datos de los produc
 		margin-top: 90px;
 		display: flex;
 		gap: 20px;
+		
 
 		> select {
 			flex: 1;
+			border-radius: 20px;
+			
 		}
 	}
 
@@ -117,4 +120,14 @@ Esta es la página de detalle de producto, se mostrarán los datos de los produc
 			border-radius: 15px;
 		}
 	}
+
+	@media (min-width: 1024px) {
+		
+		.quantity {
+			width: 40%;
+
+			
+		}
+	}
+
 </style>

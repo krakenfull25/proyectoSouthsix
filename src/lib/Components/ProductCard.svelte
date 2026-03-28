@@ -1,97 +1,163 @@
 <!--
 Card de producto que se muestra en la página home.
 -->
+
+<script>
+	import producto from '$lib/assets/icons/Gomina.png';
+	import cart from '$lib/assets/icons/cart.svg';
+	import heart from '$lib/assets/icons/heart.svg';
+</script>
+
 <a href="./product-detail">
 	<div class="card">
-	<div class="image">
-		<p>Aqui va la imagen del producto que sea, más tarde se pasará por props.</p>
-	</div>
-	<div class="card-data">
-		<p>Nombre de producto</p>
-		<p>Tipo de producto</p>
-		<div class="price">
-			<p>Precio (€)</p>
-			<p>8,99</p>
+		<div class="image">
+			<img src={producto} alt="Imagen del producto" />
 		</div>
-		<div class="buttons">
-			<p>&#x2764;</p>
-			<p>&#128722;</p>
+		<div class="card-data">
+			<p>Nombre de producto</p>
+			<p>Tipo de producto</p>
+			<div class="price">
+				<p>Precio (€)</p>
+				<p>8,99</p>
+			</div>
+			<div class="buttons">
+				<img class="icon-button" src={heart} alt="Agregar a favoritos" />
+				<img class="icon-button" src={cart} alt="Agregar al carrito" />
+			</div>
 		</div>
-	</div>
 	</div>
 </a>
 
-
 <style lang="scss">
+
+		
 	a {
 		text-decoration: none;
 
 		.card {
-		border: 1px solid #e0e0e0;
-		border-radius: 8px;
-		overflow: hidden;
-        
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-		transition:
-			transform 0.3s ease,
-			box-shadow 0.3s ease;
+			width: min(90vw, 360px);
+			height: auto;
+			background: #387373;
+			border-radius: 16px;
+			display: flex;
+			padding: 12px;
+			gap: 12px;
+			align-items: center;
+			overflow: hidden;
+			box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+			transition: transform 0.25s ease, box-shadow 0.25s ease;
 
-		&:hover {
-			transform: translateY(-4px);
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+			&:hover {
+				transform: translateY(-4px);
+				box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+			}
 		}
-	}
 
-	.image {
-		width: 100%;
-		height: 200px;
-		background-color: #f5f5f5;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: #999;
-	}
+		.image {
+			width: 120px;
+			height: 120px;
+			background: #f2f2f2;
+			border-radius: 14px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
 
-	.card-data {
-		padding: 16px;
-        
-		p {
-			margin: 0 0 8px 0;
-			font-size: 14px;
-			color: #333;
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+		}
 
-			&:first-child {
-				font-weight: 600;
-				font-size: 16px;
+		.card-data {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 100%;
+
+			p {
+				margin: 0;
+				color: white;
+
+				&:first-child {
+					font-size: 14px;
+					font-weight: 700;
+				}
+
+				&:nth-child(2) {
+					font-size: 12px;
+					opacity: 0.9;
+				}
+			}
+
+			.price {
+				margin-top: 6px;
+				display: flex;
+				justify-content: space-between;
+
+				p:last-child {
+					font-size: 15px;
+					font-weight: 700;
+				}
+			}
+
+			.buttons {
+				display: flex;
+				justify-content: center;
+				gap: 12px;
+				margin-top: auto;
+
+				.icon-button {
+					width: 36px;
+					height: 36px;
+					background: #97a6a0;
+					border-radius: 50%;
+					margin-top: 10px;
+					padding: 4px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					cursor: pointer;
+					transition: transform 0.2s ease, filter 0.2s ease;
+
+					&:hover {
+						transform: scale(1.1);
+						filter: brightness(1.15);
+					}
+				}
 			}
 		}
 	}
 
-	.price {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin: 12px 0;
-		padding: 8px 0;
-		border-top: 1px solid #f0f0f0;
-
-		p:last-child {
-			font-weight: 700;
-			font-size: 18px;
-			color: #007bff;
-		}
-	}
-
-	.buttons {
-		display: flex;
-		gap: 8px;
-		margin-top: 12px;
-        justify-content: end;
-        
-        p{font-size: 30px;
-          
-        }
+	@media (min-width: 1024px) {
 		
-	}
+		
+		a {
+			.card {
+				width: 420px;
+				height: 200px;
+				padding: 14px;
+				gap: 16px;
+			}
+
+			.image {
+				width: 140px;
+				height: 140px;
+			}
+
+			.card-data p:first-child {
+				font-size: 20px;
+			}
+
+			.card-data p:nth-child(2) {
+				font-size: 15px;
+			}
+
+			.price p:last-child {
+				font-size: 22px;
+			}
+		}
 	}
 </style>

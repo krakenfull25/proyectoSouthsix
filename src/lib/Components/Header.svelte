@@ -6,8 +6,24 @@
 </script>
 
 <header>
+	<input type="checkbox" id="menu-toggle" />
+
+	<nav class="mobile-menu">
+		<label for="menu-toggle" class="close-btn">✕</label>
+		
+
+		<a href="./">Inicio</a>
+		<a href="#">Productos</a>
+		<a href="./user-profile">Perfil</a>
+		<a href="#">Lista de deseos</a>
+	</nav>
+
+	<label for="menu-toggle" class="overlay"></label>
 	<div class="content">
-		<img src={hamburgerIcon} alt="Icono hamburger" />
+		<label for="menu-toggle" class="hamburger">
+			<img src={hamburgerIcon} alt="Icono hamburger" />
+		</label>
+
 		<img src={searchIcon} alt="Icono busqueda" />
 		<a class="logo-link" href="..">
 			<div class="logo">
@@ -23,7 +39,9 @@
 	</div>
 	<div class="content-desktop">
 		<div class="burger-container">
-			<img src={hamburgerIcon} alt="Icono hamburger" />
+			<label for="menu-toggle" class="hamburger">
+				<img src={hamburgerIcon} alt="Icono hamburger" />
+			</label>
 		</div>
 		<a class="logo-link" href="..">
 			<div class="logo">
@@ -45,12 +63,71 @@
 	header {
 		background-color: #2d3e40;
 		margin-bottom: 60px;
+		#menu-toggle {
+			display: none;
+		}
+
+		.hamburger {
+			cursor: pointer;
+			display: flex;
+		}
+
+		.mobile-menu {
+			position: fixed;
+			top: 0;
+			left: -260px;
+			width: 260px;
+			height: 100vh;
+			background: #387373;
+			display: flex;
+			flex-direction: column;
+			padding: 20px;
+			gap: 20px;
+			transition: left 0.3s ease;
+			z-index: 1000;
+		}
+
+		.mobile-menu a {
+			color: white;
+			text-decoration: none;
+			font-size: 18px;
+		}
+
+		.close-btn {
+			color: white;
+			font-size: 26px;
+			cursor: pointer;
+			align-self: flex-start;
+			margin-bottom: 10px;
+		}
+
+		.overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100vh;
+			background: rgba(0, 0, 0, 0.4);
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.3s ease;
+			z-index: 900;
+		}
+
+		#menu-toggle:checked ~ .mobile-menu {
+			left: 0;
+		}
+
+		#menu-toggle:checked ~ .overlay {
+			opacity: 1;
+			pointer-events: all;
+		}
 
 		> .content {
 			display: flex;
 			flex-direction: row;
 			flex-wrap: nowrap;
-			gap: 26px;
+
 			justify-content: space-between;
 			padding: 30px 20px;
 			align-items: center;
@@ -106,7 +183,7 @@
 
 				> .burger-container {
 					> img {
-						width: 40px;
+						width: 30px;
 					}
 				}
 
@@ -135,14 +212,15 @@
 					}
 				}
 
-                >.other-icons {
-                    display: flex;
-                    gap: 10px;
+				> .other-icons {
+					display: flex;
+					gap: 10px;
 
-                    > img, >a>img {
-                        width: 50px;
-                    }
-                }
+					> img,
+					> a > img {
+						width: 30px;
+					}
+				}
 			}
 		}
 	}
