@@ -3,22 +3,24 @@ Card de producto que se muestra en la página home.
 -->
 
 <script>
+	let { data } = $props();
+
 	import producto from '$lib/assets/icons/Gomina.png';
 	import cart from '$lib/assets/icons/cart.svg';
 	import heart from '$lib/assets/icons/heart.svg';
 </script>
 
-<a href="./product-detail">
+<a href="./product-detail/{data.id}">
 	<div class="card">
 		<div class="image">
 			<img src={producto} alt="Imagen del producto" />
 		</div>
 		<div class="card-data">
-			<p>Nombre de producto</p>
-			<p>Tipo de producto</p>
+			<p>{data.nombre_producto}</p>
+			<p>{data.tipo_producto}</p>
 			<div class="price">
 				<p>Precio (€)</p>
-				<p>8,99</p>
+				<p>{data.precio.toFixed(2)}</p>
 			</div>
 			<div class="buttons">
 				<img class="icon-button" src={heart} alt="Agregar a favoritos" />
@@ -29,8 +31,6 @@ Card de producto que se muestra en la página home.
 </a>
 
 <style lang="scss">
-
-		
 	a {
 		text-decoration: none;
 
@@ -45,7 +45,9 @@ Card de producto que se muestra en la página home.
 			align-items: center;
 			overflow: hidden;
 			box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-			transition: transform 0.25s ease, box-shadow 0.25s ease;
+			transition:
+				transform 0.25s ease,
+				box-shadow 0.25s ease;
 
 			&:hover {
 				transform: translateY(-4px);
@@ -120,7 +122,9 @@ Card de producto que se muestra en la página home.
 					align-items: center;
 					justify-content: center;
 					cursor: pointer;
-					transition: transform 0.2s ease, filter 0.2s ease;
+					transition:
+						transform 0.2s ease,
+						filter 0.2s ease;
 
 					&:hover {
 						transform: scale(1.1);
@@ -132,8 +136,6 @@ Card de producto que se muestra en la página home.
 	}
 
 	@media (min-width: 1024px) {
-		
-		
 		a {
 			.card {
 				width: 420px;

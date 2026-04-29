@@ -5,17 +5,16 @@ cuales se guardaran inicialmente en un JSON, la cuál se hará mas tarde.
 -->
 
 <script>
-	let { titulo } = $props();
+	let { titulo, productos } = $props();
 	import ProductCard from '$lib/Components/ProductCard.svelte';
 </script>
 
 <div class="container">
 	<h2>{titulo}</h2>
 	<div class="product-container">
-		<ProductCard />
-		<ProductCard />
-		<ProductCard />
-		<ProductCard />
+		{#each productos as producto}
+			<ProductCard data={producto}/>
+		{/each}
 	</div>
 </div>
 

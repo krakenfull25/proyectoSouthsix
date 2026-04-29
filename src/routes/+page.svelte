@@ -8,14 +8,16 @@ pasar por cards.
     import Header from "$lib/Components/Header.svelte";
     import DisplayProductsHome from "$lib/Components/DisplayProductsHome.svelte";
 	  import Footer from "$lib/Components/Footer.svelte";
+
+    let { data } = $props();
 </script>
 
 
 
 <Header/>
-<DisplayProductsHome titulo={"Productos destacados"}/>
-<DisplayProductsHome titulo={"Novedades"}/>
-<DisplayProductsHome titulo={"Los más vendidos"}/>
+<DisplayProductsHome titulo={"Productos destacados"} productos={data.productos}/>
+<DisplayProductsHome titulo={"Novedades"} productos={data.productos}/>
+<DisplayProductsHome titulo={"Los más vendidos"} productos={data.productos}/>
 <Footer/>
 
 
