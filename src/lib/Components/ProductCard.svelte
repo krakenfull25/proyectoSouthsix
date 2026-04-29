@@ -5,9 +5,35 @@ Card de producto que se muestra en la página home.
 <script>
 	let { data } = $props();
 
+	import { onMount } from 'svelte';
+
 	import producto from '$lib/assets/icons/Gomina.png';
 	import cart from '$lib/assets/icons/cart.svg';
 	import heart from '$lib/assets/icons/heart.svg';
+
+	let isFavorite = $derived(favorites.includes(id));
+	let favorites = $state([]);
+	let id = $derived(String(data.id));
+
+	onMount(() => {
+	const stored = localStorage.getItem('favorites');
+	favorites = stored ? JSON.parse(stored) : [];
+});
+
+	function toggleFavorite(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		if (favorites.includes(id)) {
+			favorites = favorites.filter((fav) => fav !== id);
+			isFavorite = false;
+		} else {
+			favorites = [...favorites, id];
+			isFavorite = true;
+		}
+
+		localStorage.setItem('favorites', JSON.stringify(favorites));
+	}
 </script>
 
 <a href="./product-detail/{data.id}">
@@ -23,7 +49,18 @@ Card de producto que se muestra en la página home.
 				<p>{data.precio.toFixed(2)}</p>
 			</div>
 			<div class="buttons">
-				<img class="icon-button" src={heart} alt="Agregar a favoritos" />
+				<button
+					type="button"
+					class="icon-button"
+					class:active={isFavorite}
+					onclick={(e) => {
+						e.stopPropagation();
+						toggleFavorite(e);
+					}}
+					aria-label="Agregar a favoritos"
+				>
+					<img src={heart} alt="" />
+				</button>
 				<img class="icon-button" src={cart} alt="Agregar al carrito" />
 			</div>
 		</div>
@@ -130,6 +167,40 @@ Card de producto que se muestra en la página home.
 						transform: scale(1.1);
 						filter: brightness(1.15);
 					}
+				}
+
+				
+				.icon-button {
+					width: 36px;
+					height: 36px;
+					background: #97a6a0;
+					border-radius: 50%;
+					margin-top: 10px;
+					padding: 6px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					cursor: pointer;
+					transition:
+						transform 0.2s ease,
+						filter 0.2s ease;
+					border: none;
+				}
+
+				.icon-button img {
+					width: 100%;
+					height: 100%;
+					object-fit: contain;
+					transition: filter 0.2s ease;
+				}
+
+				
+				.icon-button.active {
+					background: #97a6a0;
+				}
+
+				.icon-button.active img {
+					filter: invert(27%) sepia(86%) saturate(7470%) hue-rotate(348deg) brightness(95%);
 				}
 			}
 		}
