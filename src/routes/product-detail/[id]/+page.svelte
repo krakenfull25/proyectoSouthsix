@@ -6,6 +6,8 @@ Esta es la página de detalle de producto, se mostrarán los datos de los produc
 	import Header from '$lib/Components/Header.svelte';
 	import Footer from '$lib/Components/Footer.svelte';
 	import ImageDisplay from '$lib/Components/ImageDisplay.svelte';
+
+	let { data } = $props();
 </script>
 
 <Header />
