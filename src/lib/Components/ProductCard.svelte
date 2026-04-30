@@ -13,7 +13,7 @@ Card de producto que se muestra en la página home.
 <a href="./product-detail/{data.id}">
 	<div class="card">
 		<div class="image">
-			<img src={producto} alt="Imagen del producto" />
+			<img src={data.imagenes[0]} alt="Imagen del producto" />
 		</div>
 		<div class="card-data">
 			<p>{data.nombre_producto}</p>

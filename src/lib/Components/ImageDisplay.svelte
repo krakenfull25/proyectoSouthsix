@@ -1,20 +1,20 @@
 <!--
 Este componente se utiliza en product-detail, se muestra las imagenes del producto seleccionado.
 -->
+<script>
+	let { producto } = $props();
+</script>
 
 <div class="image">
-	<h2>Nombre del producto</h2>
+	<h2>{producto.nombre_producto}</h2>
 	<div class="image-display">
 		<div class="main-image">
-			<p>IMAGEN PRINCIPAL SELECCIONADA</p>
+			<img src={producto.imagenes[0]} alt="imagen"/>
 		</div>
 		<div class="other-images">
-			<p>Imagen 1</p>
-			<p>Imagen 2</p>
-			<p>Imagen 3</p>
-			<p>Imagen 4</p>
-			<p>Imagen 5</p>
-			<p>Imagen 6</p>
+			{#each producto.imagenes as imagen}
+				<img src={imagen} alt="imagen"/>
+			{/each}
 		</div>
 	</div>
 </div>
@@ -47,12 +47,13 @@ Este componente se utiliza en product-detail, se muestra las imagenes del produc
 			.other-images {
 				display: grid;
 				grid-template-columns: repeat(3,1fr);
-				border: 1px solid black;
 				gap: 20px;
-				> p {
-					width: 20%;
+				
+				> img {
+					position: relative;
+					width: 150px;
+					height: 150px;
 					border: 1px solid black;
-					width: 100%;
 					margin: 0;
 				}
 			}
@@ -63,6 +64,16 @@ Este componente se utiliza en product-detail, se muestra las imagenes del produc
 		.image {
 			> .image-display {
 				flex-direction: row;
+				gap: 50px;
+
+				.other-images {
+				display: grid;
+				> img {
+					
+					border: 1px solid black;
+					margin: 0;
+				}
+			}
 			}
 		}
 	}
