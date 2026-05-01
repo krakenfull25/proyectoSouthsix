@@ -18,7 +18,7 @@
 		<a href="/">Inicio</a>
 		<a href="#">Productos</a>
 		<a href={perfilUrl}>Perfil</a>
-		<a href="#">Lista de deseos</a>
+		<a href="/lista-deseos">Lista de deseos</a>
 	</nav>
 
 	<label for="menu-toggle" class="overlay"></label>

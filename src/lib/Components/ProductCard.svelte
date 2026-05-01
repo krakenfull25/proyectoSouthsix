@@ -7,33 +7,71 @@ Card de producto que se muestra en la página home.
 
 	import { onMount } from 'svelte';
 
-	import producto from '$lib/assets/icons/Gomina.png';
 	import cart from '$lib/assets/icons/cart.svg';
 	import heart from '$lib/assets/icons/heart.svg';
 
-	let isFavorite = $derived(favorites.includes(id));
+
 	let favorites = $state([]);
-	let id = $derived(String(data.id));
+	let id = $derived(Number(data.id));
+	let isFavorite = $derived(favorites.includes(id));
 
 	onMount(() => {
-	const stored = localStorage.getItem('favorites');
-	favorites = stored ? JSON.parse(stored) : [];
-});
+		const stored = localStorage.getItem('favorites');
+		favorites = stored
+		? [...new Set(JSON.parse(stored).map(Number))]
+		: [];
+	});
 
 	function toggleFavorite(event) {
-		event.preventDefault();
-		event.stopPropagation();
+	event.preventDefault();
+	event.stopPropagation();
 
-		if (favorites.includes(id)) {
-			favorites = favorites.filter((fav) => fav !== id);
-			isFavorite = false;
-		} else {
-			favorites = [...favorites, id];
-			isFavorite = true;
-		}
+	const stored = localStorage.getItem('favorites');
+	let currentFavorites = stored
+		? JSON.parse(stored).map(Number)
+		: [];
 
-		localStorage.setItem('favorites', JSON.stringify(favorites));
+	if (currentFavorites.includes(id)) {
+		currentFavorites = currentFavorites.filter((fav) => fav !== id);
+	} else {
+		currentFavorites = [...currentFavorites, id];
 	}
+
+	
+	currentFavorites = [...new Set(currentFavorites)];
+
+	localStorage.setItem('favorites', JSON.stringify(currentFavorites));
+	favorites = currentFavorites;
+
+
+
+}
+
+function addToCart(e) {
+	e.preventDefault();
+	e.stopPropagation();
+
+	const stored = localStorage.getItem('cart');
+	let cart = stored ? JSON.parse(stored) : [];
+
+	const id = Number(data.id);
+
+	const item = cart.find((p) => p.id === id);
+
+	if (item) {
+		item.cantidad += 1;
+	} else {
+		cart.push({
+			id,
+			nombre: data.nombre_producto,
+			precio: data.precio,
+			imagen: data.imagenes?.[0],
+			cantidad: 1
+		});
+	}
+
+	localStorage.setItem('cart', JSON.stringify(cart));
+}
 </script>
 
 <a href="./product-detail/{data.id}">
@@ -41,13 +79,16 @@ Card de producto que se muestra en la página home.
 		<div class="image">
 			<img src={data.imagenes[0]} alt="Imagen del producto" />
 		</div>
+
 		<div class="card-data">
 			<p>{data.nombre_producto}</p>
 			<p>{data.tipo_producto}</p>
+
 			<div class="price">
 				<p>Precio (€)</p>
 				<p>{data.precio.toFixed(2)}</p>
 			</div>
+
 			<div class="buttons">
 				<button
 					type="button"
@@ -61,7 +102,15 @@ Card de producto que se muestra en la página home.
 				>
 					<img src={heart} alt="" />
 				</button>
-				<img class="icon-button" src={cart} alt="Agregar al carrito" />
+
+				<button
+	type="button"
+	class="icon-button"
+	onclick={addToCart}
+	aria-label="Agregar al carrito"
+>
+	<img src={cart} alt="carrito" />
+</button>
 			</div>
 		</div>
 	</div>
