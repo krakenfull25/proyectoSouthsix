@@ -1,22 +1,29 @@
 <script>
+	import { browser } from '$app/environment';
 	import User from '$lib/assets/icons/User.svg';
 
-	let fields = {
-		name: '',
-		fullName: '',
-		prefix: 'esp',
-		phone: '',
-		address: '',
-		mail: ''
-	};
+	// Cargar datos guardados del usuario
+	const sesion = browser ? JSON.parse(localStorage.getItem('sesion_activa') || '{}') : {};
+	const perfil = browser ? JSON.parse(localStorage.getItem('perfil_usuario') || '{}') : {};
 
-	let touched = {
+	let fields = $state({
+		name: perfil.name || sesion.name || '',
+		fullName: perfil.fullName || '',
+		prefix: perfil.prefix || 'esp',
+		phone: perfil.phone || '',
+		address: perfil.address || '',
+		mail: perfil.mail || sesion.mail || ''
+	});
+
+	let touched = $state({
 		name: false,
 		fullName: false,
 		phone: false,
 		address: false,
 		mail: false
-	};
+	});
+
+	let guardado = $state(false);
 
 	const rules = {
 		name: (v) => {
@@ -26,7 +33,7 @@
 			return null;
 		},
 		fullName: (v) => {
-			if (!v.trim()) return 'La dirección es obligatoria.';
+			if (!v.trim()) return 'El nombre completo es obligatorio.';
 			if (v.trim().length < 5) return 'Mínimo 5 caracteres.';
 			return null;
 		},
@@ -47,26 +54,45 @@
 		}
 	};
 
-	$: errors = {
+	let errors = $derived({
 		name: rules.name(fields.name),
 		fullName: rules.fullName(fields.fullName),
 		phone: rules.phone(fields.phone),
 		address: rules.address(fields.address),
 		mail: rules.mail(fields.mail)
-	};
+	});
 
-	$: isFormValid = Object.values(errors).every((e) => e === null);
+	let isFormValid = $derived(Object.values(errors).every((e) => e === null));
 
 	function touch(field) {
 		touched[field] = true;
 	}
 
 	function handleSubmit(e) {
-		// Marcar todos como tocados para mostrar errores al intentar enviar
+		e.preventDefault();
 		Object.keys(touched).forEach((k) => (touched[k] = true));
-		if (!isFormValid) {
-			e.preventDefault();
+		if (!isFormValid) return;
+
+		// Guardar perfil en localStorage
+		localStorage.setItem('perfil_usuario', JSON.stringify({
+			name: fields.name,
+			fullName: fields.fullName,
+			prefix: fields.prefix,
+			phone: fields.phone,
+			address: fields.address,
+			mail: fields.mail
+		}));
+
+		// Actualizar también la sesión activa con el nombre actualizado
+		if (browser && localStorage.getItem('sesion_activa')) {
+			const sesionActual = JSON.parse(localStorage.getItem('sesion_activa'));
+			sesionActual.name = fields.name;
+			sesionActual.mail = fields.mail;
+			localStorage.setItem('sesion_activa', JSON.stringify(sesionActual));
 		}
+
+		guardado = true;
+		setTimeout(() => (guardado = false), 3000);
 	}
 </script>
 
@@ -76,9 +102,7 @@
 	</div>
 
 	<div class="form">
-		<form action="." method="post" on:submit={handleSubmit}>
-
-			<!-- Nombre de usuario -->
+		<form onsubmit={handleSubmit}>
 			<div class="field-group">
 				<label for="name">Nombre de usuario:</label>
 				<input
@@ -86,8 +110,8 @@
 					name="name"
 					id="name"
 					bind:value={fields.name}
-					on:blur={() => touch('name')}
-					on:input={() => touch('name')}
+					onblur={() => touch('name')}
+					oninput={() => touch('name')}
 					class:input-error={touched.name && errors.name}
 					class:input-ok={touched.name && !errors.name}
 				/>
@@ -96,7 +120,6 @@
 				{/if}
 			</div>
 
-			<!-- Nombre completo -->
 			<div class="field-group">
 				<label for="full-name">Nombre completo:</label>
 				<input
@@ -104,8 +127,8 @@
 					name="full-name"
 					id="full-name"
 					bind:value={fields.fullName}
-					on:blur={() => touch('fullName')}
-					on:input={() => touch('fullName')}
+					onblur={() => touch('fullName')}
+					oninput={() => touch('fullName')}
 					class:input-error={touched.fullName && errors.fullName}
 					class:input-ok={touched.fullName && !errors.fullName}
 				/>
@@ -114,7 +137,6 @@
 				{/if}
 			</div>
 
-			<!-- Teléfono -->
 			<div class="field-group">
 				<label for="phone">Número de teléfono:</label>
 				<div class="phone-container">
@@ -127,8 +149,8 @@
 						name="phone"
 						id="phone"
 						bind:value={fields.phone}
-						on:blur={() => touch('phone')}
-						on:input={() => touch('phone')}
+						onblur={() => touch('phone')}
+						oninput={() => touch('phone')}
 						class:input-error={touched.phone && errors.phone}
 						class:input-ok={touched.phone && !errors.phone}
 					/>
@@ -138,7 +160,6 @@
 				{/if}
 			</div>
 
-			<!-- Dirección -->
 			<div class="field-group">
 				<label for="address">Dirección:</label>
 				<input
@@ -146,8 +167,8 @@
 					name="address"
 					id="address"
 					bind:value={fields.address}
-					on:blur={() => touch('address')}
-					on:input={() => touch('address')}
+					onblur={() => touch('address')}
+					oninput={() => touch('address')}
 					class:input-error={touched.address && errors.address}
 					class:input-ok={touched.address && !errors.address}
 				/>
@@ -156,7 +177,6 @@
 				{/if}
 			</div>
 
-			<!-- Correo electrónico -->
 			<div class="field-group">
 				<label for="mail">Correo electrónico:</label>
 				<input
@@ -164,8 +184,8 @@
 					name="mail"
 					id="mail"
 					bind:value={fields.mail}
-					on:blur={() => touch('mail')}
-					on:input={() => touch('mail')}
+					onblur={() => touch('mail')}
+					oninput={() => touch('mail')}
 					class:input-error={touched.mail && errors.mail}
 					class:input-ok={touched.mail && !errors.mail}
 				/>
@@ -177,6 +197,12 @@
 			<button type="submit" class="btn-guardar" disabled={!isFormValid}>
 				Guardar cambios
 			</button>
+
+			{#if guardado}
+				<span style="color: #43a047; font-size: 14px; text-align: center;">
+					✓ Cambios guardados correctamente
+				</span>
+			{/if}
 
 		</form>
 	</div>
@@ -208,7 +234,6 @@
 			flex-direction: column;
 			gap: 40px;
 
-			// Cada campo con su label, input y mensaje de error
 			> .field-group {
 				display: flex;
 				flex-direction: column;
@@ -272,7 +297,6 @@
 				}
 			}
 
-			// Botón de guardar
 			> .btn-guardar {
 				height: 65px;
 				background-color: #e4f2e7;
@@ -283,7 +307,6 @@
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				text-decoration: none;
 				color: black;
 				cursor: pointer;
 				transition: opacity 0.2s, background-color 0.2s;

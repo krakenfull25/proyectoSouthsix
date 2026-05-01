@@ -1,8 +1,12 @@
 <script>
+	import { browser } from '$app/environment';
 	import hamburgerIcon from '$lib/assets/header-icons/hamburger-icon.svg';
 	import searchIcon from '$lib/assets/header-icons/search-icon.svg';
 	import shoppingCart from '$lib/assets/header-icons/shopping-cart.svg';
 	import userProfile from '$lib/assets/header-icons/user-profile.svg';
+
+	let sesion = browser ? localStorage.getItem('sesion_activa') : null;
+	let perfilUrl = sesion ? '/user-profile' : '/login';
 </script>
 
 <header>
@@ -10,11 +14,10 @@
 
 	<nav class="mobile-menu">
 		<label for="menu-toggle" class="close-btn">✕</label>
-		
 
-		<a href="./">Inicio</a>
+		<a href="/">Inicio</a>
 		<a href="#">Productos</a>
-		<a href="./user-profile">Perfil</a>
+		<a href={perfilUrl}>Perfil</a>
 		<a href="#">Lista de deseos</a>
 	</nav>
 
@@ -25,7 +28,7 @@
 		</label>
 
 		<img src={searchIcon} alt="Icono busqueda" />
-		<a class="logo-link" href="..">
+		<a class="logo-link" href="/">
 			<div class="logo">
 				<p>FOR-HIM</p>
 				<p>GROOMING & BEYOND</p>
@@ -33,17 +36,18 @@
 		</a>
 
 		<img src={shoppingCart} alt="Icono carrito" />
-		<a href="./user-profile">
+		<a href={perfilUrl}>
 			<img src={userProfile} alt="Icono perfil" />
 		</a>
 	</div>
+
 	<div class="content-desktop">
 		<div class="burger-container">
 			<label for="menu-toggle" class="hamburger">
 				<img src={hamburgerIcon} alt="Icono hamburger" />
 			</label>
 		</div>
-		<a class="logo-link" href="..">
+		<a class="logo-link" href="/">
 			<div class="logo">
 				<p>FOR-HIM</p>
 				<p>GROOMING & BEYOND</p>
@@ -52,7 +56,7 @@
 		<div class="other-icons">
 			<img src={searchIcon} alt="Icono busqueda" />
 			<img src={shoppingCart} alt="Icono carrito" />
-			<a href="./user-profile">
+			<a href={perfilUrl}>
 				<img src={userProfile} alt="Icono perfil" />
 			</a>
 		</div>
@@ -63,6 +67,7 @@
 	header {
 		background-color: #2d3e40;
 		margin-bottom: 60px;
+
 		#menu-toggle {
 			display: none;
 		}
@@ -127,7 +132,6 @@
 			display: flex;
 			flex-direction: row;
 			flex-wrap: nowrap;
-
 			justify-content: space-between;
 			padding: 30px 20px;
 			align-items: center;
@@ -175,7 +179,6 @@
 			}
 
 			.content-desktop {
-				display: block;
 				display: flex;
 				padding: 30px 20px;
 				align-items: center;
