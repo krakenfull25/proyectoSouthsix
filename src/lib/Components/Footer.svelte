@@ -31,12 +31,15 @@ Footer de las páginas, nada en especial que explicar.
 </footer>
 
 <style lang="scss">
+
+	
     footer {
 	background-color: #2D3E40;
 	padding: 16px 24px;
 	margin-top: 100px;
 	display: flex;
 	flex-direction: column;
+	
 	
 	gap: 32px;
 
