@@ -7,6 +7,7 @@
 
 	let sesion = browser ? localStorage.getItem('sesion_activa') : null;
 	let perfilUrl = sesion ? '/user-profile' : '/login';
+	
 </script>
 
 <header>
@@ -35,7 +36,9 @@
 			</div>
 		</a>
 
-		<img src={shoppingCart} alt="Icono carrito" />
+		<a href={"/carrito"}>
+				<img src={shoppingCart} alt="Icono carrito" />
+			</a>
 		<a href={perfilUrl}>
 			<img src={userProfile} alt="Icono perfil" />
 		</a>
@@ -55,7 +58,10 @@
 		</a>
 		<div class="other-icons">
 			<img src={searchIcon} alt="Icono busqueda" />
-			<img src={shoppingCart} alt="Icono carrito" />
+			
+			<a href={"/carrito"}>
+				<img src={shoppingCart} alt="Icono carrito" />
+			</a>
 			<a href={perfilUrl}>
 				<img src={userProfile} alt="Icono perfil" />
 			</a>

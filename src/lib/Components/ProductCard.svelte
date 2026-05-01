@@ -56,10 +56,14 @@ function addToCart(e) {
 
 	const id = Number(data.id);
 
-	const item = cart.find((p) => p.id === id);
+	const index = cart.findIndex((p) => Number(p.id) === id);
 
-	if (item) {
-		item.cantidad += 1;
+	if (index !== -1) {
+		
+		cart[index] = {
+			...cart[index],
+			cantidad: cart[index].cantidad + 1
+		};
 	} else {
 		cart.push({
 			id,
