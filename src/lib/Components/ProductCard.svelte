@@ -12,6 +12,7 @@ Card de producto que se muestra en la página home.
 
 
 	let favorites = $state([]);
+	let cartClicked = $state(false);
 	let id = $derived(Number(data.id));
 	let isFavorite = $derived(favorites.includes(id));
 
@@ -55,11 +56,9 @@ function addToCart(e) {
 	let cart = stored ? JSON.parse(stored) : [];
 
 	const id = Number(data.id);
-
 	const index = cart.findIndex((p) => Number(p.id) === id);
 
 	if (index !== -1) {
-		
 		cart[index] = {
 			...cart[index],
 			cantidad: cart[index].cantidad + 1
@@ -75,6 +74,8 @@ function addToCart(e) {
 	}
 
 	localStorage.setItem('cart', JSON.stringify(cart));
+	cartClicked = true;
+	setTimeout(() => (cartClicked = false), 180);
 }
 </script>
 
@@ -108,13 +109,14 @@ function addToCart(e) {
 				</button>
 
 				<button
-	type="button"
-	class="icon-button"
-	onclick={addToCart}
-	aria-label="Agregar al carrito"
->
-	<img src={cart} alt="carrito" />
-</button>
+				type="button"
+				class="icon-button"
+				class:clicked={cartClicked}
+				onclick={addToCart}
+				aria-label="Agregar al carrito"
+			>
+				<img src={cart} alt="carrito" />
+			</button>
 			</div>
 		</div>
 	</div>
@@ -254,6 +256,12 @@ function addToCart(e) {
 
 				.icon-button.active img {
 					filter: invert(27%) sepia(86%) saturate(7470%) hue-rotate(348deg) brightness(95%);
+				}
+
+				.icon-button.clicked {
+					transform: scale(0.88);
+					background: #7aa490;
+					box-shadow: 0 0 0 5px rgba(147, 191, 183, 0.28);
 				}
 			}
 		}
