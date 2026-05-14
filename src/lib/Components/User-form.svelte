@@ -74,20 +74,24 @@
 		if (!isFormValid) return;
 
 		// Guardar perfil en localStorage
-		localStorage.setItem('perfil_usuario', JSON.stringify({
-			name: fields.name,
-			fullName: fields.fullName,
-			prefix: fields.prefix,
-			phone: fields.phone,
-			address: fields.address,
-			mail: fields.mail
-		}));
+		localStorage.setItem(
+			'perfil_usuario',
+			JSON.stringify({
+				name: fields.name,
+				fullName: fields.fullName,
+				prefix: fields.prefix,
+				phone: fields.phone,
+				address: fields.address,
+				mail: fields.mail
+			})
+		);
 
 		// Actualizar también la sesión activa con el nombre actualizado
 		if (browser && localStorage.getItem('sesion_activa')) {
 			const sesionActual = JSON.parse(localStorage.getItem('sesion_activa'));
 			sesionActual.name = fields.name;
 			sesionActual.mail = fields.mail;
+			sesionActual.phone = fields.phone;
 			localStorage.setItem('sesion_activa', JSON.stringify(sesionActual));
 		}
 
@@ -194,21 +198,28 @@
 				{/if}
 			</div>
 
-			<button type="submit" class="btn-guardar" disabled={!isFormValid}>
-				Guardar cambios
-			</button>
+			<button type="submit" class="btn-guardar" disabled={!isFormValid}> Guardar cambios </button>
+			
 
 			{#if guardado}
 				<span style="color: #43a047; font-size: 14px; text-align: center;">
 					✓ Cambios guardados correctamente
 				</span>
 			{/if}
-
 		</form>
 	</div>
 </div>
 
 <style lang="scss">
+	:global(body, html) {
+		margin: 0;
+		padding: 0;
+		font-family: 'PT Sans Narrow', sans-serif;
+	}
+
+	:global(*) {
+		box-sizing: border-box;
+	}
 	.form-container {
 		display: flex;
 		flex-direction: column;
@@ -249,7 +260,9 @@
 					border: 1px solid #ccc;
 					border-radius: 4px;
 					padding: 0 8px;
-					transition: border-color 0.2s, box-shadow 0.2s;
+					transition:
+						border-color 0.2s,
+						box-shadow 0.2s;
 
 					&.input-error {
 						border-color: #e53935;
@@ -282,7 +295,9 @@
 						border: 1px solid #ccc;
 						border-radius: 4px;
 						padding: 0 8px;
-						transition: border-color 0.2s, box-shadow 0.2s;
+						transition:
+							border-color 0.2s,
+							box-shadow 0.2s;
 
 						&.input-error {
 							border-color: #e53935;
@@ -309,7 +324,9 @@
 				justify-content: center;
 				color: black;
 				cursor: pointer;
-				transition: opacity 0.2s, background-color 0.2s;
+				transition:
+					opacity 0.2s,
+					background-color 0.2s;
 
 				&:disabled {
 					opacity: 0.45;

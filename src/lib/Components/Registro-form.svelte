@@ -4,6 +4,7 @@
 	let fields = $state({
 		name: '',
 		mail: '',
+		phone: '',
 		password: '',
 		confirmPassword: ''
 	});
@@ -11,6 +12,7 @@
 	let touched = $state({
 		name: false,
 		mail: false,
+		phone: false,
 		password: false,
 		confirmPassword: false
 	});
@@ -25,6 +27,12 @@
 		mail: (v) => {
 			if (!v.trim()) return 'El correo es obligatorio.';
 			if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())) return 'Formato de correo no válido.';
+			return null;
+		},
+		phone: (v) => {
+			const value = v.trim();
+			if (!value) return 'El teléfono es obligatorio.';
+			if (!/^[0-9]{9,15}$/.test(value)) return 'Introduce entre 9 y 15 dígitos.';
 			return null;
 		},
 		password: (v) => {
@@ -44,6 +52,7 @@
 	let errors = $derived({
 		name: rules.name(fields.name),
 		mail: rules.mail(fields.mail),
+		phone: rules.phone(fields.phone),
 		password: rules.password(fields.password),
 		confirmPassword: rules.confirmPassword(fields.confirmPassword, fields.password)
 	});
@@ -73,6 +82,7 @@
 		const usuario = {
 			name: fields.name,
 			mail: fields.mail,
+			phone: fields.phone,
 			password: fields.password
 		};
 		localStorage.setItem('usuario_registrado', JSON.stringify(usuario));
@@ -122,8 +132,28 @@
 				{/if}
 			</div>
 
-			<div class="field-group">
-				<label for="password">Contraseña</label>
+
+
+		<div class="field-group">
+			<label for="phone">Teléfono</label>
+			<input
+				type="text"
+				id="phone"
+				name="phone"
+				placeholder="612345678"
+				bind:value={fields.phone}
+				onblur={() => touch('phone')}
+				oninput={() => touch('phone')}
+				class:input-error={touched.phone && errors.phone}
+				class:input-ok={touched.phone && !errors.phone}
+			/>
+			{#if touched.phone && errors.phone}
+				<span class="error-msg">{errors.phone}</span>
+			{/if}
+		</div>
+
+		<div class="field-group">
+			<label for="password">Contraseña</label>
 				<input
 					type="password"
 					id="password"
@@ -183,6 +213,16 @@
 </div>
 
 <style lang="scss">
+
+:global(body, html) {
+		margin: 0;
+		padding: 0;
+        font-family: 'PT Sans Narrow', sans-serif;
+	}
+
+	:global(*) {
+		box-sizing: border-box;
+	}
 	.auth-container {
 		min-height: 100vh;
 		display: flex;
