@@ -55,7 +55,7 @@ const filtered = $derived(
 
 <style lang="scss">
   main {
-    max-width: 1200px;
+    max-width: 100rem;
     margin: 0 auto;
     padding: 0 20px 60px;
     min-height: 30rem;

@@ -45,7 +45,7 @@ cuales se guardaran inicialmente en un JSON, la cuál se hará mas tarde.
 			.product-container {
 				flex-direction: row;
 				flex-wrap: wrap;
-				justify-content: center;
+				justify-content: flex-start;
 				gap: 20px;
 
 				> :global(.card) {
