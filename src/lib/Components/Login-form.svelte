@@ -63,7 +63,11 @@
 			localStorage.setItem('token', data.token);
 			localStorage.setItem('usuario', JSON.stringify(data.usuario));
 
-			goto('/');
+			if (data.usuario.rol === 'admin') {
+				goto('/admin');
+			} else {
+				goto('/');
+			};
 		} catch (err) {
 			errorLogin = 'Error de conexión con el servidor.';
 		} finally {
