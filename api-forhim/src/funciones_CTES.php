@@ -136,7 +136,7 @@ function obtener_productos()
     }
 
     try {
-        $consulta  = "SELECT productos.id_producto, productos.nombre, productos.descripcion, productos.precio, productos.imagen, productos.imagen2, productos.imagen3, categoria.nombre as categoria FROM productos, categoria WHERE productos.id_categoria = categoria.id_categoria";
+        $consulta  = "SELECT productos.id_producto, productos.nombre, productos.descripcion, productos.precio, productos.imagen, productos.imagen2, productos.imagen3,productos.stock, categoria.nombre as categoria FROM productos, categoria WHERE productos.id_categoria = categoria.id_categoria";
         $sentencia = $conexion->prepare($consulta);
         $sentencia->execute();
     } catch (PDOException $e) {
@@ -154,7 +154,8 @@ function obtener_productos()
             "descripcion"     => $fila["descripcion"],
             "tipo_producto"   => $fila["categoria"],
             "imagenes"        => array_values(array_filter([$fila["imagen"], $fila["imagen2"], $fila["imagen3"]])),
-            "precio"          => floatval($fila["precio"])
+            "precio"          => floatval($fila["precio"]),
+            "stock"           => intval($fila["stock"])
         ];
     }
 
@@ -601,6 +602,80 @@ function editar_perfil($id_usuario, $username, $nombre, $telefono, $email)
         return ["mensaje" => "Perfil actualizado correctamente"];
     } catch (PDOException $e) {
         return ["error" => "Error al actualizar: " . $e->getMessage()];
+    }
+}
+
+function obtener_pedidos()
+{
+    try {
+        $conexion = new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD, "phpmyadmin", "EstePona26@", array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        return ["error" => "No se pudo conectar: " . $e->getMessage()];
+    }
+
+    try {
+        $consulta  = "SELECT pedidos.*, usuarios.username, usuarios.email FROM pedidos, usuarios WHERE pedidos.id_usuario = usuarios.id_usuario ORDER BY pedidos.id_pedido DESC";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute();
+    } catch (PDOException $e) {
+        return ["error" => "No se pudo realizar la consulta: " . $e->getMessage()];
+    }
+
+    $pedidos = [];
+    foreach ($sentencia->fetchAll(PDO::FETCH_ASSOC) as $fila) {
+        $pedidos[] = [
+            "id_pedido"       => $fila["id_pedido"],
+            "id_usuario"      => $fila["id_usuario"],
+            "username"        => $fila["username"],
+            "email"           => $fila["email"],
+            "total"           => floatval($fila["total"]),
+            "estado"          => $fila["estado"],
+            "direccion_envio" => $fila["direccion_envio"],
+            "fecha_pedido"    => $fila["fecha_pedido"]
+        ];
+    }
+
+    $respuesta["pedidos"] = $pedidos;
+    $sentencia = null;
+    $conexion  = null;
+    return $respuesta;
+}
+
+function obtener_direcciones($id_usuario)
+{
+    try {
+        $conexion = new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        return ["error" => "No se pudo conectar: " . $e->getMessage()];
+    }
+
+    try {
+        $consulta  = "SELECT * FROM direcciones WHERE id_usuario = ?";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$id_usuario]);
+    } catch (PDOException $e) {
+        return ["error" => "Error al obtener direcciones: " . $e->getMessage()];
+    }
+
+    $respuesta["direcciones"] = $sentencia->fetchAll(PDO::FETCH_ASSOC);
+    return $respuesta;
+}
+
+function añadir_producto($nombre, $descripcion, $precio, $stock, $id_categoria)
+{
+    try {
+        $conexion = new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD, "phpmyadmin", "EstePona26@", array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        return ["error" => "No se pudo conectar: " . $e->getMessage()];
+    }
+
+    try {
+        $consulta  = "INSERT INTO productos (nombre, descripcion, precio, stock, id_categoria) VALUES (?, ?, ?, ?, ?)";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$nombre, $descripcion, $precio, $stock, $id_categoria]);
+        return ["mensaje" => "Producto añadido correctamente", "id_producto" => $conexion->lastInsertId()];
+    } catch (PDOException $e) {
+        return ["error" => "Error al añadir producto: " . $e->getMessage()];
     }
 }
 ?>

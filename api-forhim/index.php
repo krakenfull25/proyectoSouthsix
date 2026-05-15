@@ -104,6 +104,23 @@ $app->post('/compra', function ($request) {
     echo json_encode(realizar_compra($id_usuario, $productos, $direccion, $id_cupon));
 });
 
+// Editar perfil propio
+$app->put('/perfil', function ($request) {
+    $token = $request->getHeader("Authorization");
+    if (empty($token)) { echo json_encode(["error" => "Token no proporcionado"]); return; }
+    $token   = str_replace("Bearer ", "", $token[0]);
+    $payload = verificar_token($token);
+    if (!$payload) { echo json_encode(["error" => "Token inválido o expirado"]); return; }
+
+    echo json_encode(editar_perfil(
+        $payload["id_usuario"],
+        $request->getParam("username"),
+        $request->getParam("nombre"),
+        $request->getParam("telefono"),
+        $request->getParam("email")
+    ));
+});
+
 // -------------------------
 //  ADMIN
 // -------------------------
@@ -141,21 +158,31 @@ $app->delete('/admin/pedidos/{id_pedido}', function ($request) {
     echo json_encode(eliminar_pedido($request->getAttribute("id_pedido")));
 });
 
-// Editar perfil propio
-$app->put('/perfil', function ($request) {
+// Listar todos los pedidos
+$app->get('/admin/pedidos', function ($request) {
+    if (!es_admin($request)) { echo json_encode(["error" => "Acceso denegado"]); return; }
+    echo json_encode(obtener_pedidos());
+});
+
+$app->get('/direcciones', function ($request) {
     $token = $request->getHeader("Authorization");
     if (empty($token)) { echo json_encode(["error" => "Token no proporcionado"]); return; }
     $token   = str_replace("Bearer ", "", $token[0]);
     $payload = verificar_token($token);
-    if (!$payload) { echo json_encode(["error" => "Token inválido o expirado"]); return; }
+    if (!$payload) { echo json_encode(["error" => "Token inválido"]); return; }
+    echo json_encode(obtener_direcciones($payload["id_usuario"]));
+});
 
-    echo json_encode(editar_perfil(
-        $payload["id_usuario"],
-        $request->getParam("username"),
+$app->post('/admin/productos', function ($request) {
+    if (!es_admin($request)) { echo json_encode(["error" => "Acceso denegado"]); return; }
+    echo json_encode(añadir_producto(
         $request->getParam("nombre"),
-        $request->getParam("telefono"),
-        $request->getParam("email")
+        $request->getParam("descripcion"),
+        $request->getParam("precio"),
+        $request->getParam("stock"),
+        $request->getParam("id_categoria")
     ));
 });
+
 $app->run();
 ?>
