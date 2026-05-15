@@ -61,21 +61,78 @@
 	});
 
 	let isValid = $derived(Object.values(errors).every((e) => e === null));
+	const API = 'https://pagamenos.net/api-forhim';
+	let loading = $state(false);
+	let submitError = $state('');
+	let submitSuccess = $state('');
 
 	function soloNumeros(e, field, max) {
 		const value = e.target.value.replace(/\D/g, '').slice(0, max);
 		fields[field] = value;
 	}
 
-	function comprar() {
+	async function comprar(event) {
+		event.preventDefault();
+		submitError = '';
+		submitSuccess = '';
 		Object.keys(fields).forEach((k) => (touched[k] = true));
 
 		if (!isValid) return;
 
-		alert('Compra realizada correctamente');
+		const storedCart = localStorage.getItem('cart');
+		const cart = storedCart ? JSON.parse(storedCart) : [];
+		if (!cart.length) {
+			submitError = 'El carrito está vacío.';
+			return;
+		}
 
-		localStorage.removeItem('cart');
-		window.location.href = '/';
+		const token = localStorage.getItem('token');
+		if (!token) {
+			submitError = 'Debes iniciar sesión para completar la compra.';
+			return;
+		}
+
+		const productos = cart.map((item) => ({ id_producto: item.id, cantidad: item.cantidad }));
+		const direccion_envio = [
+			fields.calle,
+			fields.numero,
+			fields.codigoPostal,
+			fields.ciudad,
+			fields.provincia,
+			fields.pais
+		].filter(Boolean).join(', ');
+
+		const body = new URLSearchParams();
+		body.append('productos', JSON.stringify(productos));
+		body.append('direccion_envio', direccion_envio);
+
+		loading = true;
+
+		try {
+			const res = await fetch(`${API}/compra`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'Authorization': `Bearer ${token}`
+				},
+				body: body.toString()
+			});
+
+			const data = await res.json();
+
+			if (!res.ok || data.error) {
+				submitError = data.error || 'Error al realizar la compra.';
+				return;
+			}
+
+			submitSuccess = `Compra realizada correctamente. Pedido #${data.id_pedido}.`;
+			localStorage.removeItem('cart');
+			setTimeout(() => window.location.href = '/', 1200);
+		} catch (err) {
+			submitError = 'Error de conexión con el servidor.';
+		} finally {
+			loading = false;
+		}
 	}
 </script>
 
@@ -188,9 +245,17 @@
 		{#if touched.cvv && errors.cvv}<span class="error">{errors.cvv}</span>{/if}
 	</div>
 
-	<button type="submit" disabled={!isValid}>
-		Confirmar compra
+	<button type="submit" disabled={!isValid || loading}>
+		{loading ? 'Procesando compra...' : 'Confirmar compra'}
 	</button>
+
+	{#if submitError}
+		<p class="submit-error">{submitError}</p>
+	{/if}
+
+	{#if submitSuccess}
+		<p class="submit-success">{submitSuccess}</p>
+	{/if}
 </form>
 
 <style>
@@ -262,5 +327,17 @@
 	button:disabled {
 		background: #aaa;
 		cursor: not-allowed;
+	}
+
+	.submit-error {
+		color: #b00020;
+		font-size: 14px;
+		margin-top: 8px;
+	}
+
+	.submit-success {
+		color: #1d7a13;
+		font-size: 14px;
+		margin-top: 8px;
 	}
 </style>
