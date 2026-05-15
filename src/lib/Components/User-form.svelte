@@ -1,29 +1,34 @@
 <script>
 	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import User from '$lib/assets/icons/User.svg';
+	
+	const API = 'https://pagamenos.net/api-forhim';
 
-	// Cargar datos guardados del usuario
-	const sesion = browser ? JSON.parse(localStorage.getItem('sesion_activa') || '{}') : {};
-	const perfil = browser ? JSON.parse(localStorage.getItem('perfil_usuario') || '{}') : {};
+	const usuario = browser ? JSON.parse(localStorage.getItem('usuario') || '{}') : {};
+	const token   = browser ? localStorage.getItem('token') : null;
 
 	let fields = $state({
-		name: perfil.name || sesion.name || '',
-		fullName: perfil.fullName || '',
-		prefix: perfil.prefix || 'esp',
-		phone: perfil.phone || '',
-		address: perfil.address || '',
-		mail: perfil.mail || sesion.mail || ''
+		name: usuario.username || '',
+		fullName: usuario.nombre || '',
+		apellidos: usuario.apellidos || '',
+		prefix: 'esp',
+		phone: usuario.telefono || '',
+		mail: usuario.email || ''
 	});
 
 	let touched = $state({
 		name: false,
 		fullName: false,
+		apellidos: false,
 		phone: false,
-		address: false,
 		mail: false
 	});
 
 	let guardado = $state(false);
+	let loading = $state(false);
+	let errorMsg = $state('');
 
 	const rules = {
 		name: (v) => {
@@ -34,17 +39,17 @@
 		},
 		fullName: (v) => {
 			if (!v.trim()) return 'El nombre completo es obligatorio.';
-			if (v.trim().length < 5) return 'Mínimo 5 caracteres.';
+			if (v.trim().length < 2) return 'Mínimo 2 caracteres.';
+			return null;
+		},
+		apellidos: (v) => {
+			if (!v.trim()) return 'Los apellidos son obligatorios.';
+			if (v.trim().length < 3) return 'Mínimo 3 caracteres.';
 			return null;
 		},
 		phone: (v) => {
 			if (!v.trim()) return 'El teléfono es obligatorio.';
 			if (!/^\d{9}$/.test(v.trim())) return 'Debe contener exactamente 9 dígitos.';
-			return null;
-		},
-		address: (v) => {
-			if (!v.trim()) return 'La dirección es obligatoria.';
-			if (v.trim().length < 5) return 'Mínimo 5 caracteres.';
 			return null;
 		},
 		mail: (v) => {
@@ -57,8 +62,8 @@
 	let errors = $derived({
 		name: rules.name(fields.name),
 		fullName: rules.fullName(fields.fullName),
+		apellidos: rules.apellidos(fields.apellidos),
 		phone: rules.phone(fields.phone),
-		address: rules.address(fields.address),
 		mail: rules.mail(fields.mail)
 	});
 
@@ -68,32 +73,64 @@
 		touched[field] = true;
 	}
 
-	function handleSubmit(e) {
+	async function handleSubmit(e) {
 		e.preventDefault();
 		Object.keys(touched).forEach((k) => (touched[k] = true));
 		if (!isFormValid) return;
 
-		// Guardar perfil en localStorage
-		localStorage.setItem('perfil_usuario', JSON.stringify({
-			name: fields.name,
-			fullName: fields.fullName,
-			prefix: fields.prefix,
-			phone: fields.phone,
-			address: fields.address,
-			mail: fields.mail
-		}));
+		loading = true;
+		errorMsg = '';
 
-		// Actualizar también la sesión activa con el nombre actualizado
-		if (browser && localStorage.getItem('sesion_activa')) {
-			const sesionActual = JSON.parse(localStorage.getItem('sesion_activa'));
-			sesionActual.name = fields.name;
-			sesionActual.mail = fields.mail;
-			localStorage.setItem('sesion_activa', JSON.stringify(sesionActual));
+		try {
+			const body = new URLSearchParams();
+			body.append('username', fields.name);
+			body.append('nombre', fields.fullName);
+			body.append('apellidos', fields.apellidos);
+			body.append('telefono', fields.phone);
+			body.append('email', fields.mail);
+
+			const res = await fetch(`${API}/perfil`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					Authorization: `Bearer ${token}`
+				},
+				body: body.toString()
+			});
+
+			const data = await res.json();
+
+			if (data.error) {
+				errorMsg = data.error;
+				return;
+			}
+
+			// Actualizar localStorage
+			const usuarioActualizado = {
+				...usuario,
+				username: fields.name,
+				nombre: fields.fullName,
+				apellidos: fields.apellidos,
+				telefono: fields.phone,
+				email: fields.mail
+			};
+			localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+
+			guardado = true;
+			setTimeout(() => (guardado = false), 3000);
+		} catch (err) {
+			errorMsg = 'Error de conexión con el servidor.';
+		} finally {
+			loading = false;
 		}
-
-		guardado = true;
-		setTimeout(() => (guardado = false), 3000);
 	}
+
+	 onMount(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            goto('/login');
+        }
+    });
 </script>
 
 <div class="form-container">
@@ -121,7 +158,7 @@
 			</div>
 
 			<div class="field-group">
-				<label for="full-name">Nombre completo:</label>
+				<label for="full-name">Nombre:</label>
 				<input
 					type="text"
 					name="full-name"
@@ -134,6 +171,23 @@
 				/>
 				{#if touched.fullName && errors.fullName}
 					<span class="error-msg">{errors.fullName}</span>
+				{/if}
+			</div>
+
+			<div class="field-group">
+				<label for="apellidos">Apellidos:</label>
+				<input
+					type="text"
+					name="apellidos"
+					id="apellidos"
+					bind:value={fields.apellidos}
+					onblur={() => touch('apellidos')}
+					oninput={() => touch('apellidos')}
+					class:input-error={touched.apellidos && errors.apellidos}
+					class:input-ok={touched.apellidos && !errors.apellidos}
+				/>
+				{#if touched.apellidos && errors.apellidos}
+					<span class="error-msg">{errors.apellidos}</span>
 				{/if}
 			</div>
 
@@ -161,23 +215,6 @@
 			</div>
 
 			<div class="field-group">
-				<label for="address">Dirección:</label>
-				<input
-					type="text"
-					name="address"
-					id="address"
-					bind:value={fields.address}
-					onblur={() => touch('address')}
-					oninput={() => touch('address')}
-					class:input-error={touched.address && errors.address}
-					class:input-ok={touched.address && !errors.address}
-				/>
-				{#if touched.address && errors.address}
-					<span class="error-msg">{errors.address}</span>
-				{/if}
-			</div>
-
-			<div class="field-group">
 				<label for="mail">Correo electrónico:</label>
 				<input
 					type="text"
@@ -194,8 +231,20 @@
 				{/if}
 			</div>
 
-			<button type="submit" class="btn-guardar" disabled={!isFormValid}>
-				Guardar cambios
+			<button type="submit" class="btn-guardar" disabled={!isFormValid || loading}>
+				{loading ? 'Guardando...' : 'Guardar cambios'}
+			</button>
+
+			<button
+				type="button"
+				class="btn-logout"
+				onclick={() => {
+					localStorage.removeItem('token');
+					localStorage.removeItem('usuario');
+					goto('/');
+				}}
+			>
+				Cerrar sesión
 			</button>
 
 			{#if guardado}
@@ -204,6 +253,11 @@
 				</span>
 			{/if}
 
+			{#if errorMsg}
+				<span style="color: #e53935; font-size: 14px; text-align: center;">
+					{errorMsg}
+				</span>
+			{/if}
 		</form>
 	</div>
 </div>
@@ -249,7 +303,9 @@
 					border: 1px solid #ccc;
 					border-radius: 4px;
 					padding: 0 8px;
-					transition: border-color 0.2s, box-shadow 0.2s;
+					transition:
+						border-color 0.2s,
+						box-shadow 0.2s;
 
 					&.input-error {
 						border-color: #e53935;
@@ -282,7 +338,9 @@
 						border: 1px solid #ccc;
 						border-radius: 4px;
 						padding: 0 8px;
-						transition: border-color 0.2s, box-shadow 0.2s;
+						transition:
+							border-color 0.2s,
+							box-shadow 0.2s;
 
 						&.input-error {
 							border-color: #e53935;
@@ -309,7 +367,9 @@
 				justify-content: center;
 				color: black;
 				cursor: pointer;
-				transition: opacity 0.2s, background-color 0.2s;
+				transition:
+					opacity 0.2s,
+					background-color 0.2s;
 
 				&:disabled {
 					opacity: 0.45;
@@ -319,6 +379,26 @@
 
 				&:not(:disabled):hover {
 					background-color: #c8e6c9;
+				}
+			}
+			> .btn-logout {
+				height: 65px;
+				background-color: #fdecea;
+				border: 1px solid black;
+				border-radius: 10px;
+				font-family: 'PT Sans Narrow', sans-serif;
+				font-size: 24px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: #e53935;
+				cursor: pointer;
+				transition:
+					opacity 0.2s,
+					background-color 0.2s;
+
+				&:hover {
+					background-color: #ffcdd2;
 				}
 			}
 		}

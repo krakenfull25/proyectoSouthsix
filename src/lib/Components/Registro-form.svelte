@@ -1,9 +1,13 @@
 <script>
 	import { goto } from '$app/navigation';
 
+	const API = 'https://pagamenos.net/api-forhim';
+
 	let fields = $state({
 		name: '',
 		mail: '',
+		apellidos: '',
+		telefono: '',
 		password: '',
 		confirmPassword: ''
 	});
@@ -11,6 +15,8 @@
 	let touched = $state({
 		name: false,
 		mail: false,
+		apellidos: false,
+		telefono: false,
 		password: false,
 		confirmPassword: false
 	});
@@ -25,6 +31,16 @@
 		mail: (v) => {
 			if (!v.trim()) return 'El correo es obligatorio.';
 			if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())) return 'Formato de correo no válido.';
+			return null;
+		},
+		apellidos: (v) => {
+			if (!v.trim()) return 'Los apellidos son obligatorios.';
+			if (v.trim().length < 3) return 'Mínimo 3 caracteres.';
+			return null;
+		},
+		telefono: (v) => {
+			if (!v.trim()) return 'El teléfono es obligatorio.';
+			if (!/^[0-9]{9}$/.test(v.trim())) return 'Debe tener 9 dígitos.';
 			return null;
 		},
 		password: (v) => {
@@ -44,6 +60,8 @@
 	let errors = $derived({
 		name: rules.name(fields.name),
 		mail: rules.mail(fields.mail),
+		apellidos: rules.apellidos(fields.apellidos),
+		telefono: rules.telefono(fields.telefono),
 		password: rules.password(fields.password),
 		confirmPassword: rules.confirmPassword(fields.confirmPassword, fields.password)
 	});
@@ -64,20 +82,45 @@
 		touched[field] = true;
 	}
 
-	function handleSubmit(e) {
+	let errorRegistro = $state('');
+	let loading = $state(false);
+
+	async function handleSubmit(e) {
 		e.preventDefault();
 		Object.keys(touched).forEach((k) => (touched[k] = true));
 		if (!isFormValid) return;
 
-		// Guardar en localStorage
-		const usuario = {
-			name: fields.name,
-			mail: fields.mail,
-			password: fields.password
-		};
-		localStorage.setItem('usuario_registrado', JSON.stringify(usuario));
+		loading = true;
+		errorRegistro = '';
 
-		goto('/login');
+		try {
+			const body = new URLSearchParams();
+			body.append('email', fields.mail);
+			body.append('username', fields.name);
+			body.append('password', fields.password);
+			body.append('nombre', fields.name);
+			body.append('apellidos', fields.apellidos);
+			body.append('telefono', fields.telefono);
+
+			const res = await fetch(`${API}/registro`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: body.toString()
+			});
+
+			const data = await res.json();
+
+			if (data.error) {
+				errorRegistro = data.error;
+				return;
+			}
+
+			goto('/login');
+		} catch (err) {
+			errorRegistro = 'Error de conexión con el servidor.';
+		} finally {
+			loading = false;
+		}
 	}
 </script>
 
@@ -87,12 +130,12 @@
 
 		<form onsubmit={handleSubmit}>
 			<div class="field-group">
-				<label for="name">Nombre de usuario</label>
+				<label for="name">Nombre</label>
 				<input
 					type="text"
 					id="name"
 					name="name"
-					placeholder="tunombre"
+					placeholder="Tu nombre"
 					bind:value={fields.name}
 					onblur={() => touch('name')}
 					oninput={() => touch('name')}
@@ -101,6 +144,24 @@
 				/>
 				{#if touched.name && errors.name}
 					<span class="error-msg">{errors.name}</span>
+				{/if}
+			</div>
+
+			<div class="field-group">
+				<label for="apellidos">Apellidos</label>
+				<input
+					type="text"
+					id="apellidos"
+					name="apellidos"
+					placeholder="Tus apellidos"
+					bind:value={fields.apellidos}
+					onblur={() => touch('apellidos')}
+					oninput={() => touch('apellidos')}
+					class:input-error={touched.apellidos && errors.apellidos}
+					class:input-ok={touched.apellidos && !errors.apellidos}
+				/>
+				{#if touched.apellidos && errors.apellidos}
+					<span class="error-msg">{errors.apellidos}</span>
 				{/if}
 			</div>
 
@@ -119,6 +180,24 @@
 				/>
 				{#if touched.mail && errors.mail}
 					<span class="error-msg">{errors.mail}</span>
+				{/if}
+			</div>
+
+			<div class="field-group">
+				<label for="telefono">Teléfono</label>
+				<input
+					type="text"
+					id="telefono"
+					name="telefono"
+					placeholder="612345678"
+					bind:value={fields.telefono}
+					onblur={() => touch('telefono')}
+					oninput={() => touch('telefono')}
+					class:input-error={touched.telefono && errors.telefono}
+					class:input-ok={touched.telefono && !errors.telefono}
+				/>
+				{#if touched.telefono && errors.telefono}
+					<span class="error-msg">{errors.telefono}</span>
 				{/if}
 			</div>
 
@@ -172,9 +251,13 @@
 				{/if}
 			</div>
 
-			<button type="submit" class="btn-primary" disabled={!isFormValid}>
-				Crear cuenta
+			<button type="submit" class="btn-primary" disabled={!isFormValid || loading}>
+				{loading ? 'Creando cuenta...' : 'Crear cuenta'}
 			</button>
+
+			{#if errorRegistro}
+				<span class="error-msg" style="text-align:center">{errorRegistro}</span>
+			{/if}
 
 		</form>
 

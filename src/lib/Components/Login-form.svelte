@@ -1,6 +1,8 @@
 <script>
 	import { goto } from '$app/navigation';
 
+	const API = 'https://pagamenos.net/api-forhim';
+
 	let fields = $state({ mail: '', password: '' });
 	let touched = $state({ mail: false, password: false });
 
@@ -29,28 +31,44 @@
 	}
 
 	let errorLogin = $state('');
+	let loading = $state(false);
 
-	function handleSubmit(e) {
+	async function handleSubmit(e) {
 		e.preventDefault();
 		Object.keys(touched).forEach((k) => (touched[k] = true));
 		if (!isFormValid) return;
 
-		const usuarioGuardado = localStorage.getItem('usuario_registrado');
-		if (!usuarioGuardado) {
-			errorLogin = 'No existe ningún usuario registrado.';
-			return;
+		loading = true;
+		errorLogin = '';
+
+		try {
+			const body = new URLSearchParams();
+			body.append('email', fields.mail);
+			body.append('password', fields.password);
+
+			const res = await fetch(`${API}/login`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: body.toString()
+			});
+
+			const data = await res.json();
+
+			if (data.error) {
+				errorLogin = data.error;
+				return;
+			}
+
+			// Guardar token y datos del usuario
+			localStorage.setItem('token', data.token);
+			localStorage.setItem('usuario', JSON.stringify(data.usuario));
+
+			goto('/');
+		} catch (err) {
+			errorLogin = 'Error de conexión con el servidor.';
+		} finally {
+			loading = false;
 		}
-
-		const usuario = JSON.parse(usuarioGuardado);
-		if (usuario.mail !== fields.mail || usuario.password !== fields.password) {
-			errorLogin = 'Correo o contraseña incorrectos.';
-			return;
-		}
-
-		// Guardar sesión activa
-		localStorage.setItem('sesion_activa', JSON.stringify({ name: usuario.name, mail: usuario.mail }));
-
-		goto('/');
 	}
 </script>
 
@@ -95,8 +113,8 @@
 				{/if}
 			</div>
 
-			<button type="submit" class="btn-primary" disabled={!isFormValid}>
-				Entrar
+			<button type="submit" class="btn-primary" disabled={!isFormValid || loading}>
+				{loading ? 'Entrando...' : 'Entrar'}
 			</button>
 
 			{#if errorLogin}

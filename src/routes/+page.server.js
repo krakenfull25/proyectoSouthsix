@@ -6,3 +6,4 @@ export async function load({ fetch }) {
     productos: data.productos
   };
 }
+

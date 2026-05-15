@@ -5,8 +5,8 @@
 	import shoppingCart from '$lib/assets/header-icons/shopping-cart.svg';
 	import userProfile from '$lib/assets/header-icons/user-profile.svg';
 
-	let sesion = browser ? localStorage.getItem('sesion_activa') : null;
-	let perfilUrl = sesion ? '/user-profile' : '/login';
+	let token = browser ? localStorage.getItem('token') : null;
+	let perfilUrl = token ? '/user-profile' : '/login';
 </script>
 
 <header>

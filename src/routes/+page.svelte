@@ -5,14 +5,20 @@ pasar por cards.
 -->
 
 <script>
+    import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
     import Header from "$lib/Components/Header.svelte";
     import DisplayProductsHome from "$lib/Components/DisplayProductsHome.svelte";
-	  import Footer from "$lib/Components/Footer.svelte";
+    import Footer from "$lib/Components/Footer.svelte";
 
     let { data } = $props();
+
+    onMount(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+        }
+    });
 </script>
-
-
 
 <Header/>
 <DisplayProductsHome titulo={"Productos destacados"} productos={data.productos}/>
@@ -20,14 +26,13 @@ pasar por cards.
 <DisplayProductsHome titulo={"Los más vendidos"} productos={data.productos}/>
 <Footer/>
 
-
 <style lang="scss">
     :global(body, html) {
-    margin: 0;
-    padding: 0;
-    font-family: 'PT Sans Narrow', sans-serif;
-  }
-  :global(*){
-    box-sizing: border-box;
-  }
+        margin: 0;
+        padding: 0;
+        font-family: 'PT Sans Narrow', sans-serif;
+    }
+    :global(*) {
+        box-sizing: border-box;
+    }
 </style>
