@@ -43,10 +43,10 @@
 	}
 
 	async function cargarPedidos() {
-        const res  = await fetch(`${API}/admin/pedidos`, { headers: authHeader() });
-        const data = await res.json();
-        pedidos = data.pedidos || [];
-    }
+		const res  = await fetch(`${API}/admin/pedidos`, { headers: authHeader() });
+		const data = await res.json();
+		pedidos = data.pedidos || [];
+	}
 
 	async function borrarCliente(id) {
 		if (!confirm('¿Eliminar este cliente?')) return;
@@ -94,11 +94,24 @@
 		loading = false;
 	}
 
+	function cerrarSesionAdmin() {
+		localStorage.removeItem('token');
+		localStorage.removeItem('usuario');
+		goto('/');
+	}
+
 	onMount(async () => {
 		token = localStorage.getItem('token');
 		if (!token) { goto('/login'); return; }
 		const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
 		if (usuario.rol !== 'admin') { goto('/'); return; }
+
+		// Cerrar sesión si el admin pulsa atrás en el navegador
+		history.pushState(null, '', window.location.href);
+		window.addEventListener('popstate', () => {
+			cerrarSesionAdmin();
+		});
+
 		await cargarClientes();
 		loading = false;
 	});
@@ -128,7 +141,7 @@
 			</button>
 		</nav>
 
-		<button class="btn-salir" onclick={() => { goto('/'); }}>← Volver a la tienda</button>
+		<button class="btn-salir" onclick={cerrarSesionAdmin}>← Cerrar sesión</button>
 	</aside>
 
 	<main class="panel">
@@ -210,16 +223,18 @@
 				<table>
 					<thead>
 						<tr>
-							<th>ID</th><th>Usuario</th><th>Total</th><th>Dirección</th><th>Estado</th><th></th>
+							<th>ID</th><th>Usuario</th><th>Email</th><th>Total</th><th>Dirección</th><th>Fecha</th><th>Estado</th><th></th>
 						</tr>
 					</thead>
 					<tbody>
 						{#each pedidos as p (p.id_pedido)}
 							<tr>
 								<td>#{p.id_pedido}</td>
-								<td>#{p.id_usuario}</td>
+								<td>{p.username}</td>
+								<td>{p.email}</td>
 								<td>{parseFloat(p.total).toFixed(2)} €</td>
 								<td>{p.direccion_envio}</td>
+								<td>{p.fecha_pedido?.slice(0, 10)}</td>
 								<td>
 									<select
 										value={p.estado}
@@ -275,9 +290,7 @@
 			gap: 12px;
 			margin-bottom: 30px;
 
-			.brand-icon {
-				font-size: 28px;
-			}
+			.brand-icon { font-size: 28px; }
 
 			.brand-title {
 				margin: 0;
@@ -329,8 +342,8 @@
 
 		.btn-salir {
 			background: transparent;
-			border: 1px solid #556;
-			color: #9ab;
+			border: 1px solid #c62828;
+			color: #ef9a9a;
 			font-size: 14px;
 			font-family: 'PT Sans Narrow', sans-serif;
 			padding: 10px;
@@ -339,7 +352,7 @@
 			transition: all 0.2s;
 
 			&:hover {
-				border-color: white;
+				background: #c62828;
 				color: white;
 			}
 		}
@@ -491,10 +504,7 @@
 			flex-wrap: wrap;
 			padding: 16px;
 
-			nav {
-				flex-direction: row;
-				flex: none;
-			}
+			nav { flex-direction: row; flex: none; }
 		}
 
 		.panel { padding: 20px; }
