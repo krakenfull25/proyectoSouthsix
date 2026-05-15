@@ -266,6 +266,17 @@
 </div>
 
 <style lang="scss">
+
+
+:global(body, html) {
+		margin: 0;
+		padding: 0;
+        font-family: 'PT Sans Narrow', sans-serif;
+	}
+
+	:global(*) {
+		box-sizing: border-box;
+	}
 	.auth-container {
 		min-height: 100vh;
 		display: flex;
