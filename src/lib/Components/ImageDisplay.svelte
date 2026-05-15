@@ -34,7 +34,10 @@ Este componente se utiliza en product-detail, se muestra las imagenes del produc
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        max-width: 90rem;
+        margin: 0 auto;
         gap: 36px;
+
 
         .main-image {
             border: 1px solid black;

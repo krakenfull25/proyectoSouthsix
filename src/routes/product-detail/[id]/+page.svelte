@@ -157,19 +157,20 @@ function addToCart(e) {
 		}
 	}
 
-	.quantity {
-		margin: 30px 18px;
-		margin-top: 90px;
-		display: flex;
-		gap: 20px;
-		
+.quantity {
+  margin: 30px 18px;
+  margin-top: 90px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
 
-		> select {
-			flex: 1;
-			border-radius: 20px;
-			
-		}
-	}
+  > select {
+    width: 80px;
+    border-radius: 20px;
+    padding: 6px 10px;
+    font-size: 15px;
+  }
+}
 
 	.whislist:hover{
 		cursor: pointer;
@@ -180,61 +181,63 @@ function addToCart(e) {
 		cursor: pointer;
 	}
 	.buttons {
-		margin: 30px 18px;
-		margin-top: 90px;
-		display: flex;
-		flex-direction: column;
-		
-		
-		gap: 30px;
+  margin: 30px auto;
+  margin-top: 90px;
+  width: 90%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 
-		>.whislist {
-			text-decoration: none;
-			color: black;
-			background-color: #E4F2E7;
-			height: 50px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 18px;
-			border: 1px solid black;
-			border-radius: 15px;
-		}
+  > .whislist {
+    text-decoration: none;
+    color: black;
+    background-color: #E4F2E7;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    border: 1px solid black;
+    border-radius: 15px;
+  }
 
-		>.whislist.active {
-			background-color: #c8e6c9;
-			border-color: #43a047;
-		}
+  > .whislist.active {
+    background-color: #c8e6c9;
+    border-color: #43a047;
+  }
 
-		>.add-to-cart {
-			text-decoration: none;
-			color: black;
-			background-color: #93BFB7;
-			height: 50px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 18px;
-			border: 1px solid black;
-			border-radius: 15px;
-		}
-		.cart-message {
-			color: #43a047;
-			font-size: 18px;
-			font-weight: bold;
-			text-align: center;
-			margin-top: 0;
-			
-		}
-	}
+  > .add-to-cart {
+    text-decoration: none;
+    color: black;
+    background-color: #93BFB7;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    border: 1px solid black;
+    border-radius: 15px;
+  }
+
+  .cart-message {
+    color: #43a047;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 0;
+  }
+}
 
 	@media (min-width: 1024px) {
-		
-		.quantity {
-			width: 40%;
+  .quantity {
+    width: 100%;
+  }
 
-			
-		}
-	}
+  .buttons {
+    width: 33.333%;
+    max-width: none;
+  }
+}
 
 </style>
