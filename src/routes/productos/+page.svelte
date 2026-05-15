@@ -8,11 +8,18 @@
 
   const q = $derived(page.url.searchParams.get('q') || '');
 
-  const filtered = $derived(
+  function normalizar(str) {
+  return (str ?? '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+const filtered = $derived(
   q
     ? data.productos.filter((p) =>
-        (p.nombre?.toLowerCase() ?? '').includes(q.toLowerCase()) ||
-        (p.descripcion?.toLowerCase() ?? '').includes(q.toLowerCase())
+        normalizar(p.nombre).includes(normalizar(q)) ||
+        normalizar(p.descripcion).includes(normalizar(q))
       )
     : data.productos
 );
