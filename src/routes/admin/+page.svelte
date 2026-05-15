@@ -12,12 +12,23 @@
 	let clientes  = $state([]);
 	let productos = $state([]);
 	let pedidos   = $state([]);
+	let categorias = $state([]);
 	let loading   = $state(true);
 	let mensaje   = $state('');
 	let error     = $state('');
 
 	// Stock editable
 	let stockEdit = $state({});
+
+	// Formulario nuevo producto
+	let nuevoProducto = $state({
+		nombre: '',
+		descripcion: '',
+		precio: '',
+		stock: '',
+		id_categoria: ''
+	});
+	let loadingNuevo = $state(false);
 
 	function authHeader() {
 		return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/x-www-form-urlencoded' };
@@ -40,6 +51,12 @@
 		const data = await res.json();
 		productos  = data.productos || [];
 		productos.forEach(p => stockEdit[p.id] = p.stock ?? 0);
+	}
+
+	async function cargarCategorias() {
+		const res  = await fetch(`${API}/categorias`);
+		const data = await res.json();
+		categorias = data.categorias || [];
 	}
 
 	async function cargarPedidos() {
@@ -85,11 +102,38 @@
 		pedidos = pedidos.filter(p => p.id_pedido !== id);
 	}
 
+	async function añadirProducto(e) {
+		e.preventDefault();
+		if (!nuevoProducto.nombre || !nuevoProducto.precio || !nuevoProducto.stock || !nuevoProducto.id_categoria) {
+			notify('Rellena todos los campos obligatorios', true);
+			return;
+		}
+
+		loadingNuevo = true;
+		const body = new URLSearchParams();
+		body.append('nombre',       nuevoProducto.nombre);
+		body.append('descripcion',  nuevoProducto.descripcion);
+		body.append('precio',       nuevoProducto.precio);
+		body.append('stock',        nuevoProducto.stock);
+		body.append('id_categoria', nuevoProducto.id_categoria);
+
+		const res  = await fetch(`${API}/admin/productos`, { method: 'POST', headers: authHeader(), body: body.toString() });
+		const data = await res.json();
+		loadingNuevo = false;
+
+		if (data.error) { notify(data.error, true); return; }
+		notify(`Producto añadido correctamente (ID: ${data.id_producto})`);
+
+		// Limpiar formulario y recargar productos
+		nuevoProducto = { nombre: '', descripcion: '', precio: '', stock: '', id_categoria: '' };
+		await cargarProductos();
+	}
+
 	async function cambiarSeccion(s) {
 		seccion = s;
 		loading = true;
 		if (s === 'clientes')  await cargarClientes();
-		if (s === 'productos') await cargarProductos();
+		if (s === 'productos') { await cargarProductos(); await cargarCategorias(); }
 		if (s === 'pedidos')   await cargarPedidos();
 		loading = false;
 	}
@@ -106,11 +150,8 @@
 		const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
 		if (usuario.rol !== 'admin') { goto('/'); return; }
 
-		// Cerrar sesión si el admin pulsa atrás en el navegador
 		history.pushState(null, '', window.location.href);
-		window.addEventListener('popstate', () => {
-			cerrarSesionAdmin();
-		});
+		window.addEventListener('popstate', () => cerrarSesionAdmin());
 
 		await cargarClientes();
 		loading = false;
@@ -186,7 +227,46 @@
 			</div>
 
 		{:else if seccion === 'productos'}
-			<div class="tabla-wrap">
+
+			<!-- FORMULARIO NUEVO PRODUCTO -->
+			<div class="form-card">
+				<h2 class="form-title">➕ Añadir nuevo producto</h2>
+				<form onsubmit={añadirProducto} class="form-nuevo">
+					<div class="form-grid">
+						<div class="field">
+							<label>Nombre *</label>
+							<input type="text" placeholder="Ej: Champú Anticaída" bind:value={nuevoProducto.nombre} />
+						</div>
+						<div class="field">
+							<label>Categoría *</label>
+							<select bind:value={nuevoProducto.id_categoria}>
+								<option value="">— Selecciona —</option>
+								{#each categorias as cat}
+									<option value={cat.id}>{cat.nombre}</option>
+								{/each}
+							</select>
+						</div>
+						<div class="field">
+							<label>Precio (€) *</label>
+							<input type="number" step="0.01" min="0" placeholder="9.99" bind:value={nuevoProducto.precio} />
+						</div>
+						<div class="field">
+							<label>Stock *</label>
+							<input type="number" min="0" placeholder="50" bind:value={nuevoProducto.stock} />
+						</div>
+						<div class="field col-2">
+							<label>Descripción</label>
+							<textarea placeholder="Descripción del producto..." bind:value={nuevoProducto.descripcion} rows="3"></textarea>
+						</div>
+					</div>
+					<button type="submit" class="btn-primary" disabled={loadingNuevo}>
+						{loadingNuevo ? 'Añadiendo...' : '➕ Añadir producto'}
+					</button>
+				</form>
+			</div>
+
+			<!-- TABLA PRODUCTOS -->
+			<div class="tabla-wrap" style="margin-top: 24px;">
 				<table>
 					<thead>
 						<tr>
@@ -201,12 +281,7 @@
 								<td>{p.tipo_producto}</td>
 								<td>{p.precio.toFixed(2)} €</td>
 								<td>
-									<input
-										type="number"
-										min="0"
-										bind:value={stockEdit[p.id]}
-										class="stock-input"
-									/>
+									<input type="number" min="0" bind:value={stockEdit[p.id]} class="stock-input" />
 								</td>
 								<td>
 									<button class="btn-primary" onclick={() => guardarStock(p.id)}>Guardar</button>
@@ -265,7 +340,6 @@
 		font-family: 'PT Sans Narrow', sans-serif;
 		background: #f0f2f5;
 	}
-
 	:global(*) { box-sizing: border-box; }
 
 	.admin {
@@ -291,19 +365,8 @@
 			margin-bottom: 30px;
 
 			.brand-icon { font-size: 28px; }
-
-			.brand-title {
-				margin: 0;
-				color: white;
-				font-size: 20px;
-				font-weight: 700;
-			}
-
-			.brand-sub {
-				margin: 0;
-				color: #9ab;
-				font-size: 13px;
-			}
+			.brand-title { margin: 0; color: white; font-size: 20px; font-weight: 700; }
+			.brand-sub   { margin: 0; color: #9ab; font-size: 13px; }
 		}
 
 		nav {
@@ -327,16 +390,8 @@
 				text-align: left;
 				transition: background 0.2s, color 0.2s;
 
-				&:hover {
-					background: rgba(255,255,255,0.1);
-					color: white;
-				}
-
-				&.active {
-					background: #387373;
-					color: white;
-					font-weight: 700;
-				}
+				&:hover { background: rgba(255,255,255,0.1); color: white; }
+				&.active { background: #387373; color: white; font-weight: 700; }
 			}
 		}
 
@@ -351,10 +406,7 @@
 			cursor: pointer;
 			transition: all 0.2s;
 
-			&:hover {
-				background: #c62828;
-				color: white;
-			}
+			&:hover { background: #c62828; color: white; }
 		}
 	}
 
@@ -369,34 +421,80 @@
 			gap: 20px;
 			margin-bottom: 30px;
 
-			h1 {
-				margin: 0;
-				font-size: 28px;
-				color: #2d3e40;
-			}
+			h1 { margin: 0; font-size: 28px; color: #2d3e40; }
 		}
 
 		.toast {
 			padding: 8px 16px;
 			border-radius: 6px;
 			font-size: 14px;
-
 			&.ok  { background: #e8f5e9; color: #2e7d32; }
 			&.err { background: #fdecea; color: #c62828; }
 		}
 
-		.loader {
-			text-align: center;
-			padding: 60px;
-			color: #888;
+		.loader { text-align: center; padding: 60px; color: #888; font-size: 18px; }
+		.empty  { text-align: center; color: #aaa; padding: 40px; }
+	}
+
+	.form-card {
+		background: white;
+		border-radius: 12px;
+		padding: 28px;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+		.form-title {
+			margin: 0 0 20px;
 			font-size: 18px;
+			color: #2d3e40;
+		}
+	}
+
+	.form-nuevo {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+
+		.form-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 14px;
+
+			.col-2 { grid-column: span 2; }
+
+			@media (max-width: 600px) {
+				grid-template-columns: 1fr;
+				.col-2 { grid-column: span 1; }
+			}
+		}
+	}
+
+	.field {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+
+		label {
+			font-size: 13px;
+			font-weight: 600;
+			color: #555;
+			text-transform: uppercase;
+			letter-spacing: 0.4px;
 		}
 
-		.empty {
-			text-align: center;
-			color: #aaa;
-			padding: 40px;
+		input, select, textarea {
+			border: 1.5px solid #ddd;
+			border-radius: 8px;
+			padding: 8px 12px;
+			font-size: 15px;
+			font-family: 'PT Sans Narrow', sans-serif;
+			outline: none;
+			transition: border-color 0.2s;
+
+			&:focus { border-color: #387373; box-shadow: 0 0 0 3px rgba(56,115,115,0.1); }
 		}
+
+		input, select { height: 42px; }
+		textarea { resize: vertical; }
 	}
 
 	.tabla-wrap {
@@ -412,27 +510,15 @@
 			thead tr {
 				background: #2d3e40;
 				color: white;
-
-				th {
-					padding: 14px 16px;
-					text-align: left;
-					font-size: 14px;
-					font-weight: 600;
-				}
+				th { padding: 14px 16px; text-align: left; font-size: 14px; font-weight: 600; }
 			}
 
 			tbody tr {
 				border-bottom: 1px solid #f0f0f0;
 				transition: background 0.15s;
-
 				&:hover { background: #f9fafb; }
 				&:last-child { border-bottom: none; }
-
-				td {
-					padding: 12px 16px;
-					font-size: 15px;
-					color: #333;
-				}
+				td { padding: 12px 16px; font-size: 15px; color: #333; }
 			}
 		}
 	}
@@ -441,7 +527,6 @@
 		padding: 4px 10px;
 		border-radius: 20px;
 		font-size: 13px;
-
 		&.activo   { background: #e8f5e9; color: #2e7d32; }
 		&.inactivo { background: #fdecea; color: #c62828; }
 	}
@@ -471,13 +556,15 @@
 		color: white;
 		border: none;
 		border-radius: 6px;
-		padding: 7px 14px;
-		font-size: 14px;
+		padding: 10px 20px;
+		font-size: 15px;
 		font-family: 'PT Sans Narrow', sans-serif;
 		cursor: pointer;
 		transition: background 0.2s;
+		align-self: flex-start;
 
-		&:hover { background: #2d5f5f; }
+		&:hover:not(:disabled) { background: #2d5f5f; }
+		&:disabled { background: #aaa; cursor: not-allowed; }
 	}
 
 	.btn-danger {
@@ -490,23 +577,19 @@
 		font-family: 'PT Sans Narrow', sans-serif;
 		cursor: pointer;
 		transition: background 0.2s;
-
 		&:hover { background: #ffcdd2; }
 	}
 
 	@media (max-width: 768px) {
 		.admin { flex-direction: column; }
-
 		.sidebar {
 			width: 100%;
 			min-height: auto;
 			flex-direction: row;
 			flex-wrap: wrap;
 			padding: 16px;
-
 			nav { flex-direction: row; flex: none; }
 		}
-
 		.panel { padding: 20px; }
 	}
 </style>
