@@ -77,8 +77,8 @@
 </script>
 
 <div class="auth-container">
-	<p class="redirect"><a href="/">← Volver al inicio</a></p>
 	<div class="auth-card">
+	<p class="redirect"><a href="/">← Volver al inicio</a></p>
 		<h1>Iniciar sesión</h1>
 
 		<form onsubmit={handleSubmit}>
