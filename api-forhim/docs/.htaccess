@@ -1,0 +1,5 @@
+AuthType Basic
+AuthName "Área restringida"
+AuthUserFile /var/www/html/api-forhim/.htpasswd
+Require valid-user
+Options -Indexes

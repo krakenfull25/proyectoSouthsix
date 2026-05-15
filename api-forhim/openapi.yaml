@@ -1,0 +1,543 @@
+openapi: 3.0.0
+info:
+  title: API Tienda Online - For-Him
+  description: API REST para la tienda online de productos de higiene masculina
+  version: 1.0.0
+
+servers:
+  - url: https://pagamenos.net/api-forhim
+    description: Servidor de producción
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Producto:
+      type: object
+      properties:
+        id:
+          type: integer
+        nombre_producto:
+          type: string
+        descripcion:
+          type: string
+        tipo_producto:
+          type: string
+        imagenes:
+          type: array
+          items:
+            type: string
+        precio:
+          type: number
+
+    Categoria:
+      type: object
+      properties:
+        id:
+          type: integer
+        nombre:
+          type: string
+        descripcion:
+          type: string
+
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        username:
+          type: string
+        nombre:
+          type: string
+        apellidos:
+          type: string
+        telefono:
+          type: string
+        rol:
+          type: string
+          enum: [cliente, admin]
+        estado:
+          type: string
+          enum: [activo, inactivo]
+        fecha_registro:
+          type: string
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        usuario:
+          type: object
+          properties:
+            id:
+              type: integer
+            email:
+              type: string
+            username:
+              type: string
+            nombre:
+              type: string
+            rol:
+              type: string
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+
+    Mensaje:
+      type: object
+      properties:
+        mensaje:
+          type: string
+
+paths:
+
+  # -------------------------
+  # AUTH
+  # -------------------------
+
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: Login de usuario
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  example: carlos@pagamenos.net
+                password:
+                  type: string
+                  example: Carlos2024!
+      responses:
+        '200':
+          description: Login correcto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Email o contraseña incorrectos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /registro:
+    post:
+      tags:
+        - Auth
+      summary: Registro de nuevo cliente
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [email, username, password, nombre, apellidos, telefono]
+              properties:
+                email:
+                  type: string
+                  example: nuevo@pagamenos.net
+                username:
+                  type: string
+                  example: nuevo_usuario
+                password:
+                  type: string
+                  example: Password2024!
+                nombre:
+                  type: string
+                  example: Juan
+                apellidos:
+                  type: string
+                  example: García López
+                telefono:
+                  type: string
+                  example: "612345678"
+      responses:
+        '200':
+          description: Usuario registrado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensaje'
+        '400':
+          description: El email ya está registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # -------------------------
+  # PRODUCTOS
+  # -------------------------
+
+  /productos:
+    get:
+      tags:
+        - Productos
+      summary: Listado de todos los productos
+      responses:
+        '200':
+          description: Lista de productos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  productos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Producto'
+
+  /productos/{id_producto}:
+    get:
+      tags:
+        - Productos
+      summary: Detalle de un producto
+      parameters:
+        - name: id_producto
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Producto encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  producto:
+                    $ref: '#/components/schemas/Producto'
+        '404':
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /productos/categoria/{id_categoria}:
+    get:
+      tags:
+        - Productos
+      summary: Productos filtrados por categoría
+      parameters:
+        - name: id_categoria
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Lista de productos de la categoría
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  productos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Producto'
+
+  # -------------------------
+  # CATEGORIAS
+  # -------------------------
+
+  /categorias:
+    get:
+      tags:
+        - Categorías
+      summary: Listado de todas las categorías
+      responses:
+        '200':
+          description: Lista de categorías
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categorias:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Categoria'
+
+  # -------------------------
+  # USUARIOS
+  # -------------------------
+
+  /usuarios:
+    get:
+      tags:
+        - Usuarios
+      summary: Listado de todos los usuarios
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usuarios:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Usuario'
+
+  /usuarios/{id_usuario}:
+    get:
+      tags:
+        - Usuarios
+      summary: Detalle de un usuario
+      parameters:
+        - name: id_usuario
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usuario:
+                    $ref: '#/components/schemas/Usuario'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # -------------------------
+  # COMPRA
+  # -------------------------
+
+  /compra:
+    post:
+      tags:
+        - Compra
+      summary: Realizar una compra
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [productos, direccion_envio]
+              properties:
+                productos:
+                  type: string
+                  description: Array JSON de productos
+                  example: '[{"id_producto":1,"cantidad":2},{"id_producto":3,"cantidad":1}]'
+                direccion_envio:
+                  type: string
+                  example: Calle Mayor 1, Bilbao
+                id_cupon:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: Pedido realizado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                  id_pedido:
+                    type: integer
+                  total:
+                    type: number
+                  estado:
+                    type: string
+        '400':
+          description: Error en la compra
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Token inválido o no proporcionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # -------------------------
+  # ADMIN
+  # -------------------------
+
+  /admin/clientes/{id_usuario}:
+    delete:
+      tags:
+        - Admin
+      summary: Eliminar un cliente
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id_usuario
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 2
+      responses:
+        '200':
+          description: Cliente eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensaje'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/productos/{id_producto}/stock:
+    put:
+      tags:
+        - Admin
+      summary: Editar stock de un producto
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id_producto
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [stock]
+              properties:
+                stock:
+                  type: integer
+                  example: 100
+      responses:
+        '200':
+          description: Stock actualizado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                  id_producto:
+                    type: integer
+                  stock:
+                    type: integer
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/pedidos/{id_pedido}:
+    put:
+      tags:
+        - Admin
+      summary: Modificar estado de un pedido
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id_pedido
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [estado]
+              properties:
+                estado:
+                  type: string
+                  enum: [pendiente, confirmado, enviado, entregado, cancelado]
+                  example: enviado
+      responses:
+        '200':
+          description: Pedido actualizado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                  id_pedido:
+                    type: integer
+                  estado:
+                    type: string
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Admin
+      summary: Eliminar un pedido y restaurar stock
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id_pedido
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Pedido eliminado y stock restaurado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensaje'
+        '403':
+          description: Acceso denegado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
