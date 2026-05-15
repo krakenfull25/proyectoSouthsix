@@ -21,11 +21,11 @@
 				return;
 			}
 
-			const res = await fetch(`/carrito/api?ids=${cartIds.join(',')}`);
+			const res = await fetch(`https://pagamenos.net/api-forhim/productos`);
 			if (!res.ok) throw new Error('Error API carrito');
 
 			const data = await res.json();
-			cartProducts = data.productos;
+			cartProducts = data.productos.filter(p => cartIds.includes(p.id));
 
 		} catch (err) {
 			console.error(err);

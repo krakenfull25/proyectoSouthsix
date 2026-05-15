@@ -17,9 +17,10 @@
         }
 
         try {
-            const res = await fetch(`/lista-deseos/api?ids=${ids}`);
+            const res = await fetch(`https://pagamenos.net/api-forhim/productos`);
             const data = await res.json();
-            productos = data.productos ?? [];
+            const idsArray = ids.split(',').map(Number);
+            productos = data.productos.filter(p => idsArray.includes(p.id));
         } catch (e) {
             console.error(e);
         } finally {

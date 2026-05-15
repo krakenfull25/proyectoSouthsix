@@ -26,7 +26,8 @@
 		<a href="/">Inicio</a>
 		<a href="#">Productos</a>
 		<a href={perfilUrl}>Perfil</a>
-		<a href="#">Lista de deseos</a>
+		<a href="/lista-deseos">Lista de deseos</a>
+		<a href="/carrito">Carrito</a>
 		{#if token}
 			<button class="btn-logout-menu" onclick={cerrarSesion}>Cerrar sesión</button>
 		{/if}
@@ -47,7 +48,9 @@
 			</div>
 		</a>
 
-		<img src={shoppingCart} alt="Icono carrito" />
+		<a href="/carrito">
+			<img src={shoppingCart} alt="Icono carrito" />
+		</a>
 		<a href={perfilUrl}>
 			<img src={userProfile} alt="Icono perfil" />
 		</a>
@@ -67,7 +70,9 @@
 		</a>
 		<div class="other-icons">
 			<img src={searchIcon} alt="Icono busqueda" />
-			<img src={shoppingCart} alt="Icono carrito" />
+			<a href="/carrito">
+				<img src={shoppingCart} alt="Icono carrito" />
+			</a>
 			<a href={perfilUrl}>
 				<img src={userProfile} alt="Icono perfil" />
 			</a>
@@ -177,6 +182,11 @@
 			}
 
 			> img {
+				display: block;
+				object-fit: cover;
+			}
+
+			> a > img {
 				display: block;
 				object-fit: cover;
 			}
