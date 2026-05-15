@@ -6,6 +6,8 @@
 	let fields = $state({
 		name: '',
 		mail: '',
+		apellidos: '',
+		telefono: '',
 		password: '',
 		confirmPassword: ''
 	});
@@ -13,6 +15,8 @@
 	let touched = $state({
 		name: false,
 		mail: false,
+		apellidos: false,
+		telefono: false,
 		password: false,
 		confirmPassword: false
 	});
@@ -27,6 +31,16 @@
 		mail: (v) => {
 			if (!v.trim()) return 'El correo es obligatorio.';
 			if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())) return 'Formato de correo no válido.';
+			return null;
+		},
+		apellidos: (v) => {
+			if (!v.trim()) return 'Los apellidos son obligatorios.';
+			if (v.trim().length < 3) return 'Mínimo 3 caracteres.';
+			return null;
+		},
+		telefono: (v) => {
+			if (!v.trim()) return 'El teléfono es obligatorio.';
+			if (!/^[0-9]{9}$/.test(v.trim())) return 'Debe tener 9 dígitos.';
 			return null;
 		},
 		password: (v) => {
@@ -46,6 +60,8 @@
 	let errors = $derived({
 		name: rules.name(fields.name),
 		mail: rules.mail(fields.mail),
+		apellidos: rules.apellidos(fields.apellidos),
+		telefono: rules.telefono(fields.telefono),
 		password: rules.password(fields.password),
 		confirmPassword: rules.confirmPassword(fields.confirmPassword, fields.password)
 	});
@@ -74,13 +90,30 @@
 		Object.keys(touched).forEach((k) => (touched[k] = true));
 		if (!isFormValid) return;
 
-		// Guardar en localStorage
-		const usuario = {
-			name: fields.name,
-			mail: fields.mail,
-			password: fields.password
-		};
-		localStorage.setItem('usuario_registrado', JSON.stringify(usuario));
+		loading = true;
+		errorRegistro = '';
+
+		try {
+			const body = new URLSearchParams();
+			body.append('email', fields.mail);
+			body.append('username', fields.name);
+			body.append('password', fields.password);
+			body.append('nombre', fields.name);
+			body.append('apellidos', fields.apellidos);
+			body.append('telefono', fields.telefono);
+
+			const res = await fetch(`${API}/registro`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: body.toString()
+			});
+
+			const data = await res.json();
+
+			if (data.error) {
+				errorRegistro = data.error;
+				return;
+			}
 
 			goto('/login');
 		} catch (err) {
@@ -150,8 +183,26 @@
 				{/if}
 			</div>
 
-		<div class="field-group">
-			<label for="password">Contraseña</label>
+			<div class="field-group">
+				<label for="telefono">Teléfono</label>
+				<input
+					type="text"
+					id="telefono"
+					name="telefono"
+					placeholder="612345678"
+					bind:value={fields.telefono}
+					onblur={() => touch('telefono')}
+					oninput={() => touch('telefono')}
+					class:input-error={touched.telefono && errors.telefono}
+					class:input-ok={touched.telefono && !errors.telefono}
+				/>
+				{#if touched.telefono && errors.telefono}
+					<span class="error-msg">{errors.telefono}</span>
+				{/if}
+			</div>
+
+			<div class="field-group">
+				<label for="password">Contraseña</label>
 				<input
 					type="password"
 					id="password"
@@ -215,16 +266,6 @@
 </div>
 
 <style lang="scss">
-
-:global(body, html) {
-		margin: 0;
-		padding: 0;
-        font-family: 'PT Sans Narrow', sans-serif;
-	}
-
-	:global(*) {
-		box-sizing: border-box;
-	}
 	.auth-container {
 		min-height: 100vh;
 		display: flex;

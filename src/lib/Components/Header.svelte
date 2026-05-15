@@ -1,12 +1,20 @@
 <script>
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import hamburgerIcon from '$lib/assets/header-icons/hamburger-icon.svg';
 	import searchIcon from '$lib/assets/header-icons/search-icon.svg';
 	import shoppingCart from '$lib/assets/header-icons/shopping-cart.svg';
 	import userProfile from '$lib/assets/header-icons/user-profile.svg';
 
-	let sesion = browser ? localStorage.getItem('sesion_activa') : null;
-	let perfilUrl = sesion ? '/user-profile' : '/login';
+	let token = browser ? localStorage.getItem('token') : null;
+	let perfilUrl = token ? '/user-profile' : '/login';
+
+	function cerrarSesion() {
+		localStorage.removeItem('token');
+		localStorage.removeItem('usuario');
+		goto('/');
+		location.reload();
+	}
 </script>
 
 <header>
@@ -18,10 +26,14 @@
 		<a href="/">Inicio</a>
 		<a href="#">Productos</a>
 		<a href={perfilUrl}>Perfil</a>
-		<a href="/lista-deseos">Lista de deseos</a>
+		<a href="#">Lista de deseos</a>
+		{#if token}
+			<button class="btn-logout-menu" onclick={cerrarSesion}>Cerrar sesión</button>
+		{/if}
 	</nav>
 
 	<label for="menu-toggle" class="overlay"></label>
+
 	<div class="content">
 		<label for="menu-toggle" class="hamburger">
 			<img src={hamburgerIcon} alt="Icono hamburger" />
@@ -35,9 +47,7 @@
 			</div>
 		</a>
 
-		<a href={"/carrito"}>
-				<img src={shoppingCart} alt="Icono carrito" />
-			</a>
+		<img src={shoppingCart} alt="Icono carrito" />
 		<a href={perfilUrl}>
 			<img src={userProfile} alt="Icono perfil" />
 		</a>
@@ -57,13 +67,13 @@
 		</a>
 		<div class="other-icons">
 			<img src={searchIcon} alt="Icono busqueda" />
-			
-			<a href={"/carrito"}>
-				<img src={shoppingCart} alt="Icono carrito" />
-			</a>
+			<img src={shoppingCart} alt="Icono carrito" />
 			<a href={perfilUrl}>
 				<img src={userProfile} alt="Icono perfil" />
 			</a>
+			{#if token}
+				<button class="btn-logout-desktop" onclick={cerrarSesion}>Cerrar sesión</button>
+			{/if}
 		</div>
 	</div>
 </header>
@@ -177,6 +187,37 @@
 		}
 	}
 
+	.btn-logout-menu {
+		background: transparent;
+		border: 1px solid white;
+		border-radius: 6px;
+		color: white;
+		font-size: 16px;
+		padding: 8px 12px;
+		cursor: pointer;
+		font-family: 'PT Sans Narrow', sans-serif;
+		text-align: left;
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.15);
+		}
+	}
+
+	.btn-logout-desktop {
+		background: transparent;
+		border: 1px solid white;
+		border-radius: 6px;
+		color: white;
+		font-size: 14px;
+		padding: 6px 12px;
+		cursor: pointer;
+		font-family: 'PT Sans Narrow', sans-serif;
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.15);
+		}
+	}
+
 	@media (min-width: 1024px) {
 		header {
 			.content {
@@ -223,6 +264,7 @@
 				> .other-icons {
 					display: flex;
 					gap: 10px;
+					align-items: center;
 
 					> img,
 					> a > img {
