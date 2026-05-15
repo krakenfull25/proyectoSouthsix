@@ -244,6 +244,19 @@
 </div>
 
 <style lang="scss">
+
+
+
+	:global(body, html) {
+		margin: 0;
+		padding: 0;
+        font-family: 'PT Sans Narrow', sans-serif;
+	}
+
+	:global(*) {
+		box-sizing: border-box;
+	}
+
 	.form-container {
 		display: flex;
 		flex-direction: column;
