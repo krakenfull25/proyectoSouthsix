@@ -5,8 +5,8 @@
 	import shoppingCart from '$lib/assets/header-icons/shopping-cart.svg';
 	import userProfile from '$lib/assets/header-icons/user-profile.svg';
 
-	let token = browser ? localStorage.getItem('token') : null;
-	let perfilUrl = token ? '/user-profile' : '/login';
+	let sesion = browser ? localStorage.getItem('sesion_activa') : null;
+	let perfilUrl = sesion ? '/user-profile' : '/login';
 </script>
 
 <header>
@@ -18,7 +18,7 @@
 		<a href="/">Inicio</a>
 		<a href="#">Productos</a>
 		<a href={perfilUrl}>Perfil</a>
-		<a href="#">Lista de deseos</a>
+		<a href="/lista-deseos">Lista de deseos</a>
 	</nav>
 
 	<label for="menu-toggle" class="overlay"></label>
@@ -35,7 +35,9 @@
 			</div>
 		</a>
 
-		<img src={shoppingCart} alt="Icono carrito" />
+		<a href={"/carrito"}>
+				<img src={shoppingCart} alt="Icono carrito" />
+			</a>
 		<a href={perfilUrl}>
 			<img src={userProfile} alt="Icono perfil" />
 		</a>
@@ -55,7 +57,10 @@
 		</a>
 		<div class="other-icons">
 			<img src={searchIcon} alt="Icono busqueda" />
-			<img src={shoppingCart} alt="Icono carrito" />
+			
+			<a href={"/carrito"}>
+				<img src={shoppingCart} alt="Icono carrito" />
+			</a>
 			<a href={perfilUrl}>
 				<img src={userProfile} alt="Icono perfil" />
 			</a>

@@ -78,43 +78,23 @@
 		Object.keys(touched).forEach((k) => (touched[k] = true));
 		if (!isFormValid) return;
 
-		loading = true;
-		errorMsg = '';
+		// Guardar perfil en localStorage
+		localStorage.setItem('perfil_usuario', JSON.stringify({
+			name: fields.name,
+			fullName: fields.fullName,
+			prefix: fields.prefix,
+			phone: fields.phone,
+			address: fields.address,
+			mail: fields.mail
+		}));
 
-		try {
-			const body = new URLSearchParams();
-			body.append('username', fields.name);
-			body.append('nombre', fields.fullName);
-			body.append('apellidos', fields.apellidos);
-			body.append('telefono', fields.phone);
-			body.append('email', fields.mail);
-
-			const res = await fetch(`${API}/perfil`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-					Authorization: `Bearer ${token}`
-				},
-				body: body.toString()
-			});
-
-			const data = await res.json();
-
-			if (data.error) {
-				errorMsg = data.error;
-				return;
-			}
-
-			// Actualizar localStorage
-			const usuarioActualizado = {
-				...usuario,
-				username: fields.name,
-				nombre: fields.fullName,
-				apellidos: fields.apellidos,
-				telefono: fields.phone,
-				email: fields.mail
-			};
-			localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+		// Actualizar también la sesión activa con el nombre actualizado
+		if (browser && localStorage.getItem('sesion_activa')) {
+			const sesionActual = JSON.parse(localStorage.getItem('sesion_activa'));
+			sesionActual.name = fields.name;
+			sesionActual.mail = fields.mail;
+			localStorage.setItem('sesion_activa', JSON.stringify(sesionActual));
+		}
 
 			guardado = true;
 			setTimeout(() => (guardado = false), 3000);
@@ -231,20 +211,8 @@
 				{/if}
 			</div>
 
-			<button type="submit" class="btn-guardar" disabled={!isFormValid || loading}>
-				{loading ? 'Guardando...' : 'Guardar cambios'}
-			</button>
-
-			<button
-				type="button"
-				class="btn-logout"
-				onclick={() => {
-					localStorage.removeItem('token');
-					localStorage.removeItem('usuario');
-					goto('/');
-				}}
-			>
-				Cerrar sesión
+			<button type="submit" class="btn-guardar" disabled={!isFormValid}>
+				Guardar cambios
 			</button>
 
 			{#if guardado}
@@ -253,16 +221,20 @@
 				</span>
 			{/if}
 
-			{#if errorMsg}
-				<span style="color: #e53935; font-size: 14px; text-align: center;">
-					{errorMsg}
-				</span>
-			{/if}
 		</form>
 	</div>
 </div>
 
 <style lang="scss">
+	:global(body, html) {
+		margin: 0;
+		padding: 0;
+		font-family: 'PT Sans Narrow', sans-serif;
+	}
+
+	:global(*) {
+		box-sizing: border-box;
+	}
 	.form-container {
 		display: flex;
 		flex-direction: column;
