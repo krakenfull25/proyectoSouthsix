@@ -77,6 +77,7 @@
 </script>
 
 <div class="auth-container">
+	<p class="redirect"><a href="/">← Volver al inicio</a></p>
 	<div class="auth-card">
 		<h1>Iniciar sesión</h1>
 
